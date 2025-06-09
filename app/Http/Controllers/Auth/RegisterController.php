@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\BetaInvitation;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -41,6 +43,20 @@ class RegisterController extends Controller
     }
 
     /**
+     * Show the application registration form.
+     */
+    public function showRegistrationForm()
+    {
+        // Vérifier qu'un code beta valide est en session
+        if (!session('valid_beta_code')) {
+            return redirect()->route('beta.welcome')
+                           ->withErrors(['code' => 'Vous devez d\'abord entrer un code d\'invitation valide.']);
+        }
+
+        return view('auth.register');
+    }
+
+    /**
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
@@ -63,10 +79,31 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        // Récupérer le code beta de la session
+        $betaCode = session('valid_beta_code');
+        
+        if (!$betaCode) {
+            abort(403, 'Code beta requis');
+        }
+
+        // Créer l'utilisateur
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'is_beta_tester' => true,
+            'beta_invitation_code' => $betaCode,
         ]);
+
+        // Marquer le code d'invitation comme utilisé
+        $invitation = BetaInvitation::where('code', $betaCode)->first();
+        if ($invitation) {
+            $invitation->markAsUsed($user);
+        }
+
+        // Nettoyer la session
+        session()->forget('valid_beta_code');
+
+        return $user;
     }
 }

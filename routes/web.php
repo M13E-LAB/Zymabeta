@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialFeedController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\BetaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,6 +21,10 @@ Route::get('/products/{id}', [OpenFoodFactsController::class, 'show'])->name('pr
 Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
 Route::get('/statistics/city/{city}', [StatisticsController::class, 'cityDetail'])->name('statistics.city');
 Route::get('/api/statistics', [StatisticsController::class, 'apiStats'])->name('api.statistics');
+
+// Routes Beta (avant les autres routes)
+Route::get('/', [BetaController::class, 'welcome'])->name('beta.welcome');
+Route::post('/beta/verify', [BetaController::class, 'verifyCode'])->name('beta.verify');
 
 // Profil utilisateur et Feed Social
 Route::middleware(['auth'])->group(function () {
@@ -59,6 +64,11 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/leagues/{slug}/members/{userId}', [App\Http\Controllers\LeagueController::class, 'removeMember'])->name('leagues.removeMember');
     Route::get('/leaderboard', [App\Http\Controllers\LeagueController::class, 'globalLeaderboard'])->name('leaderboard.global');
     Route::get('/leagues/{slug}/meal-upload', [App\Http\Controllers\LeagueController::class, 'mealUpload'])->name('leagues.meal.upload');
+
+    // Routes admin beta (protégées)
+    Route::get('/beta/dashboard', [BetaController::class, 'dashboard'])->name('beta.dashboard');
+    Route::get('/beta/codes', [BetaController::class, 'listCodes'])->name('beta.codes');
+    Route::post('/beta/generate', [BetaController::class, 'generateCodes'])->name('beta.generate');
 });
 
 // Routes d'authentification (login, register, password reset, etc.)
