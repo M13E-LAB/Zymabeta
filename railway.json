@@ -4,13 +4,15 @@
     "builder": "nixpacks"
   },
   "deploy": {
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 300,
     "restartPolicyType": "on_failure"
   },
   "environments": {
     "production": {
       "variables": {
         "APP_ENV": "production",
-        "APP_DEBUG": "true",
+        "APP_DEBUG": "false",
         "APP_KEY": "base64:mcSE07/xaGmT9Beq4xuzbFsd3SUJJTje8kFpZnUeW3k=",
         "APP_URL": "https://${{ RAILWAY_PUBLIC_DOMAIN }}",
         "DB_CONNECTION": "mysql",
@@ -19,13 +21,13 @@
         "DB_DATABASE": "${{ MYSQLDATABASE }}",
         "DB_USERNAME": "${{ MYSQLUSER }}",
         "DB_PASSWORD": "${{ MYSQLPASSWORD }}",
-        "SESSION_DRIVER": "file",
-        "CACHE_DRIVER": "file",
-        "QUEUE_CONNECTION": "sync",
+        "SESSION_DRIVER": "database",
+        "CACHE_DRIVER": "database",
+        "QUEUE_CONNECTION": "database",
         "NIXPACKS_PHP_FALLBACK_PATH": "/",
         "NODE_VERSION": "18",
         "LOG_CHANNEL": "stderr",
-        "LOG_LEVEL": "debug"
+        "LOG_LEVEL": "info"
       }
     }
   }

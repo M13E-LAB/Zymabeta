@@ -34,9 +34,11 @@ Route::get('/db-test', function () {
     }
 });
 
-Route::get('/', function () {
-    return "Welcome to ZYMA! App is running.";
-});
+Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.search');
+
+// Route::get('/', function () {
+//     return "Welcome to ZYMA! App is running.";
+// });
 
 // Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.search');
 Route::post('/fetch', [OpenFoodFactsController::class, 'fetch'])->name('products.fetch');
