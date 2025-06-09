@@ -4,8 +4,6 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "healthcheckPath": "/health",
-    "healthcheckTimeout": 300,
     "restartPolicyType": "on_failure"
   },
   "environments": {
@@ -21,9 +19,9 @@
         "DB_DATABASE": "${{ MYSQLDATABASE }}",
         "DB_USERNAME": "${{ MYSQLUSER }}",
         "DB_PASSWORD": "${{ MYSQLPASSWORD }}",
-        "SESSION_DRIVER": "database",
-        "CACHE_DRIVER": "database",
-        "QUEUE_CONNECTION": "database",
+        "SESSION_DRIVER": "file",
+        "CACHE_DRIVER": "file",
+        "QUEUE_CONNECTION": "sync",
         "NIXPACKS_PHP_FALLBACK_PATH": "/",
         "NODE_VERSION": "18",
         "LOG_CHANNEL": "stderr",

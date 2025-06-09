@@ -32,7 +32,7 @@ Route::get('/db-test', function () {
     }
 });
 
-// Route principale temporaire - TESTE SIMPLE
+// ROUTES ULTRA-BASIQUES - AUCUNE DÉPENDANCE
 Route::get('/', function () {
     return '<!DOCTYPE html>
 <html>
@@ -40,56 +40,68 @@ Route::get('/', function () {
     <title>ZYMA Beta</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: white; }
-        .container { max-width: 600px; margin: 0 auto; background: #16213e; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .container { max-width: 600px; margin: 0 auto; background: #16213e; padding: 40px; border-radius: 15px; }
         h1 { color: #00d4aa; margin-bottom: 20px; font-size: 3em; }
         .status { background: #28a745; color: white; padding: 15px; border-radius: 8px; margin: 20px 0; }
-        .links { margin-top: 30px; }
-        .links a { display: inline-block; margin: 10px; padding: 15px 25px; background: #007bff; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; }
-        .links a:hover { background: #0056b3; transform: translateY(-2px); transition: all 0.3s; }
+        .links a { display: inline-block; margin: 10px; padding: 15px 25px; background: #007bff; color: white; text-decoration: none; border-radius: 8px; }
         .beta-info { background: #0d6efd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .debug { background: #6c757d; padding: 15px; border-radius: 8px; margin: 10px 0; font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 ZYMA</h1>
-        <div class="status">
-            ✅ Application Beta Déployée avec Succès !
-        </div>
+        <h1>🚀 ZYMA BETA</h1>
+        <div class="status">✅ Application en ligne !</div>
         
         <div class="beta-info">
-            <h2>🔐 Accès Beta</h2>
-            <p>Cette application est en phase beta privée.</p>
-            <p>Un code d\'invitation est requis pour accéder à l\'application complète.</p>
+            <h2>🔐 Accès Beta Privé</h2>
+            <p>Version de test déployée avec succès</p>
+        </div>
+        
+        <div class="debug">
+            <strong>Debug Info:</strong><br>
+            PHP: ' . PHP_VERSION . '<br>
+            Timestamp: ' . date('Y-m-d H:i:s') . '<br>
+            Status: ONLINE
         </div>
         
         <div class="links">
-            <a href="/test">Test Simple</a>
-            <a href="/health">Health Check</a>
-            <a href="/db-test">Database Status</a>
+            <a href="/simple">Test Simple</a>
+            <a href="/env-check">Check ENV</a>
         </div>
         
-        <div class="links">
-            <a href="/beta/dashboard" style="background: #28a745;">Dashboard Beta</a>
-            <a href="/register" style="background: #dc3545;">Inscription</a>
-            <a href="/login" style="background: #6c757d;">Connexion</a>
-        </div>
-        
-        <p style="margin-top: 30px; color: #6c757d; font-size: 14px;">
-            ZYMA Beta v1.0 - Déployé le ' . date('d/m/Y à H:i:s') . '
+        <p style="margin-top: 30px; color: #6c757d;">
+            ZYMA v1.0 - ' . date('d/m/Y H:i') . '
         </p>
     </div>
 </body>
 </html>';
 });
 
-// Test route pour beta controller
-Route::get('/beta-test', function () {
-    try {
-        $controller = new \App\Http\Controllers\BetaController();
-        return "BetaController instantiated successfully!";
-    } catch (Exception $e) {
-        return "BetaController Error: " . $e->getMessage();
-    }
+// Test ultra-simple
+Route::get('/simple', function () {
+    return 'ZYMA Simple Test - OK at ' . date('Y-m-d H:i:s');
+});
+
+// Test des variables d'environnement
+Route::get('/env-check', function () {
+    $html = '<h1>Environment Check</h1>';
+    $html .= '<p>APP_ENV: ' . (env('APP_ENV', 'not set')) . '</p>';
+    $html .= '<p>APP_KEY: ' . (env('APP_KEY') ? 'SET (' . substr(env('APP_KEY'), 0, 20) . '...)' : 'NOT SET') . '</p>';
+    $html .= '<p>DB_HOST: ' . (env('DB_HOST', 'not set')) . '</p>';
+    $html .= '<p>DB_DATABASE: ' . (env('DB_DATABASE', 'not set')) . '</p>';
+    
+    return $html;
+});
+
+// Test de base SANS AUTH ni middleware
+Route::get('/test-basic', function () {
+    return response()->json([
+        'status' => 'OK',
+        'app' => 'ZYMA',
+        'php' => PHP_VERSION,
+        'time' => now()->toDateTimeString()
+    ]);
 });
 
 // Routes Beta SÉCURISÉES (commentées temporairement)
