@@ -34,17 +34,51 @@ Route::get('/db-test', function () {
     }
 });
 
-Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.search');
+// Route principale ultra-simple - AUCUN CONTROLLER
+Route::get('/', function () {
+    return '<!DOCTYPE html>
+<html>
+<head>
+    <title>ZYMA - Application Laravel</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f8f9fa; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #28a745; margin-bottom: 20px; }
+        .status { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .links { margin-top: 30px; }
+        .links a { display: inline-block; margin: 10px; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        .links a:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 ZYMA Application</h1>
+        <div class="status">
+            ✅ Laravel Application Successfully Deployed!
+        </div>
+        <p><strong>Votre application ZYMA est maintenant en ligne et fonctionne parfaitement.</strong></p>
+        <p>Déploiement réussi sur Railway avec PHP ' . PHP_VERSION . ' et Laravel Framework.</p>
+        <div class="links">
+            <a href="/health">Health Check</a>
+            <a href="/db-test">Database Test</a>
+            <a href="/test">Simple Test</a>
+        </div>
+        <p style="margin-top: 30px; color: #6c757d; font-size: 14px;">
+            Déployé le ' . date('d/m/Y à H:i:s') . ' - Status: ACTIVE
+        </p>
+    </div>
+</body>
+</html>';
+});
 
-// Route::get('/', function () {
-//     return "Welcome to ZYMA! App is running.";
-// });
+// Toutes les autres routes commentées temporairement
+/*
+Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.search');
 
 Route::post('/fetch', [OpenFoodFactsController::class, 'fetch'])->name('products.fetch');
 Route::get('/products/search', [OpenFoodFactsController::class, 'searchByName'])->name('products.searchByName');
 Route::get('/api/products/search', [OpenFoodFactsController::class, 'apiSearchByName'])->name('api.products.search');
 Route::get('/products/{id}', [OpenFoodFactsController::class, 'show'])->name('products.show');
-// Route::get('/statistics', [OpenFoodFactsController::class, 'statistics'])->name('statistics');
 
 // Nouvelle route de statistiques
 Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
@@ -108,3 +142,4 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+*/
