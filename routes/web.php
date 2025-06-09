@@ -40,7 +40,6 @@ Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.searc
 //     return "Welcome to ZYMA! App is running.";
 // });
 
-// Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.search');
 Route::post('/fetch', [OpenFoodFactsController::class, 'fetch'])->name('products.fetch');
 Route::get('/products/search', [OpenFoodFactsController::class, 'searchByName'])->name('products.searchByName');
 Route::get('/api/products/search', [OpenFoodFactsController::class, 'apiSearchByName'])->name('api.products.search');
