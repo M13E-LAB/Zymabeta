@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\OpenFoodFactsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialFeedController;
@@ -10,13 +9,18 @@ use App\Http\Controllers\BetaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+// Route ultra-simple pour test
+Route::get('/test', function () {
+    return "ZYMA is working!";
+});
+
 // Route de diagnostic simple
 Route::get('/health', function () {
     return response()->json([
         'status' => 'OK',
         'timestamp' => now(),
-        'app' => config('app.name'),
-        'env' => config('app.env')
+        'app' => 'ZYMA',
+        'env' => 'production'
     ]);
 });
 
@@ -30,7 +34,11 @@ Route::get('/db-test', function () {
     }
 });
 
-Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.search');
+Route::get('/', function () {
+    return "Welcome to ZYMA! App is running.";
+});
+
+// Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.search');
 Route::post('/fetch', [OpenFoodFactsController::class, 'fetch'])->name('products.fetch');
 Route::get('/products/search', [OpenFoodFactsController::class, 'searchByName'])->name('products.searchByName');
 Route::get('/api/products/search', [OpenFoodFactsController::class, 'apiSearchByName'])->name('api.products.search');
