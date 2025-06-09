@@ -5,8 +5,8 @@
   },
   "deploy": {
     "healthcheckPath": "/",
-    "healthcheckTimeout": 100,
-    "restartPolicyType": "never"
+    "healthcheckTimeout": 300,
+    "restartPolicyType": "on_failure"
   },
   "environments": {
     "production": {
@@ -23,7 +23,9 @@
         "DB_PASSWORD": "${{ MYSQLPASSWORD }}",
         "SESSION_DRIVER": "database",
         "CACHE_DRIVER": "database",
-        "QUEUE_CONNECTION": "database"
+        "QUEUE_CONNECTION": "database",
+        "NIXPACKS_PHP_FALLBACK_PATH": "/",
+        "NODE_VERSION": "18"
       }
     }
   }
