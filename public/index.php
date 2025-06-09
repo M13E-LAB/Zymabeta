@@ -1,55 +1,55 @@
 <?php
-// Test ultra-simple pour voir si c'est Laravel qui pose problème
 
-echo "<!DOCTYPE html>";
-echo "<html><head><title>ZYMA Test</title></head><body>";
-echo "<h1>🔧 ZYMA Debug Mode</h1>";
-echo "<p><strong>PHP Version:</strong> " . PHP_VERSION . "</p>";
-echo "<p><strong>Server Time:</strong> " . date('Y-m-d H:i:s') . "</p>";
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
 
-// Test des variables d'environnement
-echo "<h2>Environment Variables:</h2>";
-echo "<p>APP_ENV: " . ($_ENV['APP_ENV'] ?? getenv('APP_ENV') ?? 'not set') . "</p>";
-echo "<p>APP_KEY: " . (($_ENV['APP_KEY'] ?? getenv('APP_KEY')) ? 'SET' : 'NOT SET') . "</p>";
-echo "<p>DB_HOST: " . ($_ENV['DB_HOST'] ?? getenv('DB_HOST') ?? 'not set') . "</p>";
+define('LARAVEL_START', microtime(true));
 
-// Test de base de données
-echo "<h2>Database Test:</h2>";
-try {
-    $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST');
-    $db = $_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE');
-    $user = $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME');
-    $pass = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD');
-    
-    if ($host && $db) {
-        $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
-        echo "<p style='color: green;'>✅ Database Connection: SUCCESS</p>";
-    } else {
-        echo "<p style='color: orange;'>⚠️ Database Connection: No config found</p>";
-    }
-} catch (Exception $e) {
-    echo "<p style='color: red;'>❌ Database Connection: " . $e->getMessage() . "</p>";
+/*
+|--------------------------------------------------------------------------
+| Check If The Application Is Under Maintenance
+|--------------------------------------------------------------------------
+|
+| If the application is in maintenance / demo mode via the "down" command
+| we will load this file so that any pre-rendered content can be shown
+| instead of starting the framework, which could cause an exception.
+|
+*/
+
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
 }
 
-echo "<h2>Laravel Test:</h2>";
-echo "<p>Trying to load Laravel...</p>";
+/*
+|--------------------------------------------------------------------------
+| Register The Auto Loader
+|--------------------------------------------------------------------------
+|
+| Composer provides a convenient, automatically generated class loader for
+| this application. We just need to utilize it! We'll simply require it
+| into the script here so we don't need to manually load our classes.
+|
+*/
 
-try {
-    // Essayer de charger Laravel
-    require_once __DIR__.'/../vendor/autoload.php';
-    echo "<p style='color: green;'>✅ Autoload: SUCCESS</p>";
-    
-    $app = require_once __DIR__.'/../bootstrap/app.php';
-    echo "<p style='color: green;'>✅ Bootstrap: SUCCESS</p>";
-    
-    echo "<p style='color: green;'>🎉 Laravel loaded successfully! The issue is in routes or controllers.</p>";
-    
-} catch (Exception $e) {
-    echo "<p style='color: red;'>❌ Laravel Error: " . $e->getMessage() . "</p>";
-    echo "<p>File: " . $e->getFile() . " Line: " . $e->getLine() . "</p>";
-}
+require __DIR__.'/../vendor/autoload.php';
 
-echo "<hr>";
-echo "<p><a href='/test.php'>Test PHP Pure</a></p>";
-echo "</body></html>";
-?>
+/*
+|--------------------------------------------------------------------------
+| Run The Application
+|--------------------------------------------------------------------------
+|
+| Once we have the application, we can handle the incoming request using
+| the application's HTTP kernel. Then, we will send the response back
+| to this client's browser, allowing them to enjoy our application.
+|
+*/
+
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response); 
