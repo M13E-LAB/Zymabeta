@@ -10,6 +10,26 @@ use App\Http\Controllers\BetaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+// Route de diagnostic simple
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'OK',
+        'timestamp' => now(),
+        'app' => config('app.name'),
+        'env' => config('app.env')
+    ]);
+});
+
+// Test de connexion DB
+Route::get('/db-test', function () {
+    try {
+        \DB::connection()->getPdo();
+        return response()->json(['db_status' => 'Connected']);
+    } catch (\Exception $e) {
+        return response()->json(['db_status' => 'Failed', 'error' => $e->getMessage()]);
+    }
+});
+
 Route::get('/', [OpenFoodFactsController::class, 'index'])->name('products.search');
 Route::post('/fetch', [OpenFoodFactsController::class, 'fetch'])->name('products.fetch');
 Route::get('/products/search', [OpenFoodFactsController::class, 'searchByName'])->name('products.searchByName');

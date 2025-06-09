@@ -4,7 +4,7 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "healthcheckPath": "/",
+    "healthcheckPath": "/health",
     "healthcheckTimeout": 300,
     "restartPolicyType": "on_failure"
   },
@@ -12,7 +12,7 @@
     "production": {
       "variables": {
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_KEY": "base64:mcSE07/xaGmT9Beq4xuzbFsd3SUJJTje8kFpZnUeW3k=",
         "APP_URL": "https://${{ RAILWAY_PUBLIC_DOMAIN }}",
         "DB_CONNECTION": "mysql",
