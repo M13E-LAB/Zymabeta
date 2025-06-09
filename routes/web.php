@@ -55,7 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leagues', [App\Http\Controllers\LeagueController::class, 'index'])->name('leagues.index');
     Route::get('/leagues/create', [App\Http\Controllers\LeagueController::class, 'create'])->name('leagues.create');
     Route::post('/leagues', [App\Http\Controllers\LeagueController::class, 'store'])->name('leagues.store');
-    Route::get('/leagues/meal-upload', [App\Http\Controllers\LeagueController::class, 'mealUpload'])->name('leagues.meal.upload');
+    Route::get('/leagues/meal-upload', [App\Http\Controllers\LeagueController::class, 'mealUpload'])->name('leagues.meal.upload.general');
     Route::post('/leagues/meal-store', [App\Http\Controllers\LeagueController::class, 'mealStore'])->name('leagues.meal.store');
     Route::get('/leagues/{slug}', [App\Http\Controllers\LeagueController::class, 'show'])->name('leagues.show');
     Route::post('/leagues/join', [App\Http\Controllers\LeagueController::class, 'join'])->name('leagues.join');

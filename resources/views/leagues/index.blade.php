@@ -188,7 +188,7 @@
                             <i class="fas fa-camera-retro mb-3" style="font-size: 3rem; color: #3498DB;"></i>
                             <h5>Aucun repas partagé</h5>
                             <p class="text-muted mb-4">Commencez à partager vos repas pour gagner des points dans vos ligues !</p>
-                            <a href="{{ route('leagues.meal.upload') }}" class="btn btn-primary">
+                            <a href="{{ route('leagues.meal.upload.general') }}" class="btn btn-primary">
                                 <i class="fas fa-camera me-2"></i>Partager mon premier repas
                             </a>
                         </div>
