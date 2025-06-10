@@ -1,13 +1,8 @@
 [phases.build]
-cmds = [
-    "composer install --optimize-autoloader",
-    "npm ci",
-    "npm run build"
-]
+cmds = ["echo 'Build minimal'"]
 
 [phases.start]
-cmd = "cd public && php -S 0.0.0.0:$PORT"
+cmd = "cd public && php -S 0.0.0.0:$PORT index.php"
 
 [variables]
-PHP_VERSION = "8.2"
-NODE_VERSION = "18" 
+PHP_VERSION = "8.2" 
