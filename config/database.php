@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'none'),
+    'default' => env('DB_CONNECTION', env('DATABASE_URL') ? 'pgsql' : 'sqlite'),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,9 +30,6 @@ return [
     */
 
     'connections' => [
-        'none' => [
-        'driver' => 'null',
-    ],
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
