@@ -1,36 +1,55 @@
 <?php
-// PHP PUR - AUCUN LARAVEL
-echo "<!DOCTYPE html>
-<html>
-<head>
-    <title>ZYMA - Working!</title>
-    <style>
-        body { font-family: Arial; text-align: center; padding: 50px; background: #1a1a2e; color: white; }
-        .container { max-width: 600px; margin: 0 auto; background: #16213e; padding: 40px; border-radius: 15px; }
-        h1 { color: #00d4aa; font-size: 3em; }
-        .success { background: #28a745; padding: 15px; border-radius: 8px; margin: 20px 0; }
-        .info { background: #17a2b8; padding: 15px; border-radius: 8px; margin: 20px 0; }
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <h1>🎉 ZYMA WORKS!</h1>
-        <div class='success'>✅ PHP Application Successfully Running!</div>
-        <div class='info'>
-            <h3>System Info:</h3>
-            <p><strong>PHP Version:</strong> " . PHP_VERSION . "</p>
-            <p><strong>Server Time:</strong> " . date('Y-m-d H:i:s') . "</p>
-            <p><strong>Status:</strong> ONLINE & WORKING</p>
-        </div>
-        <div class='info'>
-            <h3>🚀 ZYMA Beta Application</h3>
-            <p>Your application is now successfully deployed!</p>
-            <p>Ready for development and testing.</p>
-        </div>
-        <p style='color: #6c757d; margin-top: 30px;'>
-            ZYMA v1.0 - Deployed " . date('d/m/Y H:i:s') . "
-        </p>
-    </div>
-</body>
-</html>";
-?> 
+
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+/*
+|--------------------------------------------------------------------------
+| Check If The Application Is Under Maintenance
+|--------------------------------------------------------------------------
+|
+| If the application is in maintenance / demo mode via the "down" command
+| we will require this file so that any pre-rendered content can be shown
+| instead of starting the framework, which could cause an exception.
+|
+*/
+
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Register The Auto Loader
+|--------------------------------------------------------------------------
+|
+| Composer provides a convenient, automatically generated class loader for
+| this application. We just need to utilize it! We'll simply require it
+| into the script here so we don't need to manually load our classes.
+|
+*/
+
+require __DIR__.'/../vendor/autoload.php';
+
+/*
+|--------------------------------------------------------------------------
+| Run The Application
+|--------------------------------------------------------------------------
+|
+| Once we have the application, we can handle the incoming request using
+| the application's HTTP kernel. Then, we will send the response back
+| to this client's browser, allowing them to enjoy our application.
+|
+*/
+
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response); 

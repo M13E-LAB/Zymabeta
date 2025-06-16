@@ -190,4 +190,23 @@ class User extends Authenticatable
         
         return $this->badges()->where('slug', $badgeSlug)->exists();
     }
+
+    /**
+     * Get the leagues created by the user.
+     */
+    public function createdLeagues()
+    {
+        return $this->hasMany(League::class, 'created_by');
+    }
+
+    /**
+     * Get the leagues the user is a member of.
+     */
+    public function leagues()
+    {
+        return $this->belongsToMany(League::class, 'league_members')
+            ->using(LeagueMember::class)
+            ->withPivot('weekly_score', 'monthly_score', 'total_score', 'position', 'role', 'last_score_update')
+            ->withTimestamps();
+    }
 }

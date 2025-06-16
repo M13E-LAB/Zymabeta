@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use App\Models\PointTransaction;
 
 class RegisterController extends Controller
 {
@@ -47,12 +48,7 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
-        // Vérifier qu'un code beta valide est en session
-        if (!session('valid_beta_code')) {
-            return redirect()->route('beta.welcome')
-                           ->withErrors(['code' => 'Vous devez d\'abord entrer un code d\'invitation valide.']);
-        }
-
+        // Beta ouverte - pas de code requis pour l'instant
         return view('auth.register');
     }
 
@@ -79,30 +75,14 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // Récupérer le code beta de la session
-        $betaCode = session('valid_beta_code');
-        
-        if (!$betaCode) {
-            abort(403, 'Code beta requis');
-        }
-
-        // Créer l'utilisateur
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'is_beta_tester' => true,
-            'beta_invitation_code' => $betaCode,
         ]);
 
-        // Marquer le code d'invitation comme utilisé
-        $invitation = BetaInvitation::where('code', $betaCode)->first();
-        if ($invitation) {
-            $invitation->markAsUsed($user);
-        }
-
-        // Nettoyer la session
-        session()->forget('valid_beta_code');
+        // Attribution de points de bienvenue
+        PointTransaction::awardPoints($user->id, 'registration', 'Inscription sur ZYMA');
 
         return $user;
     }

@@ -1,464 +1,640 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Smimos - ZYMA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-@section('content')
-<div class="profile-container">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #000000;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 20px 16px;
+            background: #000000;
+            border-bottom: 1px solid #1a1a1a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .league-title {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .league-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .private-badge {
+            background: #333333;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .creator-info {
+            font-size: 14px;
+            color: #888888;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 24px;
+            border: 1px solid #333333;
+            background: #1a1a1a;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background: #007AFF;
+            border-color: #007AFF;
+        }
+
+        .btn-danger {
+            background: #FF3B30;
+            border-color: #FF3B30;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.8;
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.95);
+            opacity: 0.9;
+        }
+
+        /* Marimba Section */
+        .marimba-section {
+            padding: 20px;
+            background: #111111;
+            border-radius: 16px;
+            margin: 0 20px 20px;
+            border: 1px solid #1a1a1a;
+            font-style: italic;
+            font-size: 16px;
+            color: #888888;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin: 0 20px 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            border-radius: 24px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            color: #888888;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .tab:hover {
+            background: #222222;
+            border-color: #444444;
+        }
+
+        .tab:active {
+            transform: scale(0.95);
+        }
+
+        .tab.active {
+            background: #007AFF;
+            border-color: #007AFF;
+            color: #ffffff;
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            padding: 0 20px;
+        }
+
+        .leaderboard-header {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px 140px;
+            gap: 16px;
+            padding: 12px 20px;
+            background: #111111;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #888888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .leaderboard-item {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px 140px;
+            gap: 16px;
+            align-items: center;
+            padding: 16px 20px;
+            background: #111111;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #1a1a1a;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        .position {
+            font-size: 20px;
+            font-weight: 900;
+            color: #007AFF;
+        }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .member-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .member-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .join-date {
+            font-size: 13px;
+            color: #888888;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 20px;
+            margin: 20px;
+            background: #111111;
+            border-radius: 16px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .stats-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #888888;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* Share Section */
+        .share-section {
+            padding: 20px;
+            margin: 20px;
+            background: #111111;
+            border-radius: 16px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .share-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-description {
+            color: #888888;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .invite-code {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .code-text {
+            flex: 1;
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .copy-btn {
+            background: #333333;
+            border: none;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #555555;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid #1a1a1a;
+            padding: 16px 24px 32px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #888888;
+            transition: all 0.3s ease;
+        }
+
+        .bottom-nav-item.active {
+            color: #007AFF;
+        }
+
+        .bottom-nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .bottom-nav-label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .leaderboard-item {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Responsive ajustements */
+        @media (max-width: 380px) {
+            .leaderboard-header,
+            .leaderboard-item {
+                grid-template-columns: 60px 1fr 100px 120px;
+                gap: 12px;
+                padding: 12px 16px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
     <div class="container">
-        <!-- En-tête de la page de ligue -->
-        <div class="d-flex justify-content-between align-items-start flex-wrap mb-4">
-            <div>
-                <h1 class="section-title mb-2">{{ $league->name }}</h1>
-                <p class="feed-subtitle">
-                    @if($league->is_private)
-                        <span class="badge bg-secondary me-2">
-                            <i class="fas fa-lock me-1"></i> Ligue Privée
-                        </span>
-                    @else
-                        <span class="badge bg-success me-2">
-                            <i class="fas fa-globe me-1"></i> Ligue Publique
-                        </span>
-                    @endif
-                    
-                    <span class="text-muted">Créée par {{ $league->creator->name }}</span>
-                </p>
-                
-                @if($league->description)
-                    <div class="league-description mb-3">
-                        {{ $league->description }}
-                    </div>
-                @endif
+        <!-- Header -->
+        <header class="header">
+            <h1 class="league-title">Les Smimos</h1>
+            <div class="league-info">
+                <span class="private-badge">🔒 Ligue Privée</span>
+                <span class="creator-info">Créée par {{ $league->creator->name }}</span>
             </div>
             
-            <div class="d-flex flex-wrap gap-2">
-                @if($isMember)
-                    <a href="{{ route('leagues.meal.upload', $league->slug) }}" class="btn btn-primary">
-                        <i class="fas fa-camera me-2"></i> Partager un repas
-                    </a>
-                @endif
-                @if($isMember)
-                    <form action="{{ route('leagues.leave', $league->slug) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-outline-light" onclick="return confirm('Êtes-vous sûr de vouloir quitter cette ligue ?')">
-                            <i class="fas fa-sign-out-alt me-2"></i> Quitter la ligue
-                        </button>
-                    </form>
-                @endif
-                @if($league->created_by === auth()->id())
-                    <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#inviteModal">
-                        <i class="fas fa-user-plus me-2"></i> Inviter des amis
-                    </button>
-                @endif
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{{ route('social.create') }}" class="btn btn-primary">
+                    📷 Partager un repas
+                </a>
+                <button class="btn btn-danger" onclick="confirmLeaveLeague()">
+                    🚪 Quitter la ligue
+                </button>
+                <button class="btn" onclick="scrollToInvite()">
+                    👥 Inviter des amis
+                </button>
             </div>
-        </div>
-        
-        @if(session('success'))
-            <div class="alert alert-success mb-4">
-                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-            </div>
-        @endif
-        
-        @if(session('error'))
-            <div class="alert alert-danger mb-4">
-                <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
-            </div>
-        @endif
-        
-        <!-- Affichage des classements avec onglets -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs" id="leaderboardTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="weekly-tab" data-bs-toggle="tab" data-bs-target="#weekly" type="button" role="tab" aria-controls="weekly" aria-selected="true">
-                            <i class="fas fa-calendar-week me-1"></i> Classement hebdo
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly" type="button" role="tab" aria-controls="monthly" aria-selected="false">
-                            <i class="fas fa-calendar-alt me-1"></i> Classement mensuel
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="overall-tab" data-bs-toggle="tab" data-bs-target="#overall" type="button" role="tab" aria-controls="overall" aria-selected="false">
-                            <i class="fas fa-trophy me-1"></i> Classement général
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab" aria-controls="members" aria-selected="false">
-                            <i class="fas fa-users me-1"></i> Membres
-                        </button>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-body">
-                <div class="tab-content" id="leaderboardTabContent">
-                    <!-- Classement hebdomadaire -->
-                    <div class="tab-pane fade show active" id="weekly" role="tabpanel" aria-labelledby="weekly-tab">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Position</th>
-                                        <th>Membre</th>
-                                        <th>Score hebdo</th>
-                                        <th>Dernière activité</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($weeklyLeaderboard as $member)
-                                        <tr @if($member->id === auth()->id()) class="bg-dark" @endif>
-                                            <td>{{ $member->pivot->position }}</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    @if($member->avatar)
-                                                        <img src="{{ $member->avatar }}" alt="Avatar" class="avatar-small me-2">
-                                                    @else
-                                                        <i class="fas fa-user-circle me-2" style="font-size: 1.5rem;"></i>
-                                                    @endif
-                                                    {{ $member->name }}
-                                                </div>
-                                            </td>
-                                            <td>{{ $member->pivot->weekly_score }}</td>
-                                            <td>
-                                                @if($member->pivot->last_score_update)
-                                                    @if(is_string($member->pivot->last_score_update))
-                                                        {{ \Carbon\Carbon::parse($member->pivot->last_score_update)->diffForHumans() }}
-                                                    @else
-                                                        {{ $member->pivot->last_score_update->diffForHumans() }}
-                                                    @endif
-                                                @else
-                                                    Jamais
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center">Aucun score cette semaine</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- Classement mensuel -->
-                    <div class="tab-pane fade" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Position</th>
-                                        <th>Membre</th>
-                                        <th>Score mensuel</th>
-                                        <th>Dernière activité</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($monthlyLeaderboard as $member)
-                                        <tr @if($member->id === auth()->id()) class="bg-dark" @endif>
-                                            <td>{{ $member->pivot->position }}</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    @if($member->avatar)
-                                                        <img src="{{ $member->avatar }}" alt="Avatar" class="avatar-small me-2">
-                                                    @else
-                                                        <i class="fas fa-user-circle me-2" style="font-size: 1.5rem;"></i>
-                                                    @endif
-                                                    {{ $member->name }}
-                                                </div>
-                                            </td>
-                                            <td>{{ $member->pivot->monthly_score }}</td>
-                                            <td>
-                                                @if($member->pivot->last_score_update)
-                                                    @if(is_string($member->pivot->last_score_update))
-                                                        {{ \Carbon\Carbon::parse($member->pivot->last_score_update)->diffForHumans() }}
-                                                    @else
-                                                        {{ $member->pivot->last_score_update->diffForHumans() }}
-                                                    @endif
-                                                @else
-                                                    Jamais
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center">Aucun score ce mois-ci</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- Classement général -->
-                    <div class="tab-pane fade" id="overall" role="tabpanel" aria-labelledby="overall-tab">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Position</th>
-                                        <th>Membre</th>
-                                        <th>Score total</th>
-                                        <th>Membre depuis</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($overallLeaderboard as $member)
-                                        <tr @if($member->id === auth()->id()) class="bg-dark" @endif>
-                                            <td>{{ $member->pivot->position }}</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    @if($member->avatar)
-                                                        <img src="{{ $member->avatar }}" alt="Avatar" class="avatar-small me-2">
-                                                    @else
-                                                        <i class="fas fa-user-circle me-2" style="font-size: 1.5rem;"></i>
-                                                    @endif
-                                                    {{ $member->name }}
-                                                </div>
-                                            </td>
-                                            <td>{{ $member->pivot->total_score }}</td>
-                                            <td>{{ $member->pivot->created_at->format('d/m/Y') }}</td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center">Aucun score disponible</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- Liste des membres -->
-                    <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Membre</th>
-                                        <th>Rôle</th>
-                                        <th>Membre depuis</th>
-                                        @if($league->created_by === auth()->id())
-                                            <th>Actions</th>
-                                        @endif
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($league->members as $member)
-                                        <tr @if($member->id === auth()->id()) class="bg-dark" @endif>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    @if($member->avatar)
-                                                        <img src="{{ $member->avatar }}" alt="Avatar" class="avatar-small me-2">
-                                                    @else
-                                                        <i class="fas fa-user-circle me-2" style="font-size: 1.5rem;"></i>
-                                                    @endif
-                                                    {{ $member->name }}
-                                                    @if($league->created_by === $member->id)
-                                                        <span class="badge bg-warning ms-2">Créateur</span>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                            <td>
-                                                @if($member->pivot->role === 'admin')
-                                                    <span class="badge bg-primary">Admin</span>
-                                                @else
-                                                    <span class="badge bg-secondary">Membre</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $member->pivot->created_at->format('d/m/Y') }}</td>
-                                            @if($league->created_by === auth()->id() && $member->id !== auth()->id())
-                                                <td>
-                                                    <div class="btn-group" role="group">
-                                                        <form action="{{ route('leagues.updateMemberRole', ['slug' => $league->slug, 'userId' => $member->id]) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <input type="hidden" name="role" value="{{ $member->pivot->role === 'admin' ? 'member' : 'admin' }}">
-                                                            <button type="submit" class="btn btn-sm btn-outline-light me-2">
-                                                                @if($member->pivot->role === 'admin')
-                                                                    <i class="fas fa-user me-1"></i> Rétrograder
-                                                                @else
-                                                                    <i class="fas fa-user-shield me-1"></i> Promouvoir
-                                                                @endif
-                                                            </button>
-                                                        </form>
-                                                        
-                                                        <form action="{{ route('leagues.removeMember', ['slug' => $league->slug, 'userId' => $member->id]) }}" method="POST" class="d-inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir retirer ce membre ?')">
-                                                                <i class="fas fa-user-times me-1"></i> Retirer
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            @endif
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Statistiques de la ligue -->
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Statistiques de la ligue</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="league-stats">
-                            <div class="stat-item">
-                                <div class="stat-label">Membres</div>
-                                <div class="stat-value">{{ $league->members->count() }} / {{ $league->max_members }}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Score moyen</div>
-                                <div class="stat-value">{{ round($league->members->avg('pivot.total_score')) }}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Créée le</div>
-                                <div class="stat-value">{{ $league->created_at->format('d/m/Y') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-share-alt me-2"></i> Partager cette ligue</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>Partagez ce code d'invitation avec vos amis pour qu'ils rejoignent votre ligue :</p>
-                        <div class="invite-code-container">
-                            <input type="text" value="{{ $league->invite_code }}" class="form-control" id="inviteCode" readonly>
-                            <button class="btn btn-outline-light" onclick="copyInviteCode()">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        </header>
 
-<!-- Modal d'invitation -->
-<div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content bg-dark text-white">
-            <div class="modal-header">
-                <h5 class="modal-title" id="inviteModalLabel">Inviter des amis dans la ligue</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Marimba Section -->
+        <div class="marimba-section">
+            Marimba
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active">📅 Classement hebdo</button>
+            <button class="tab">📆 Classement mensuel</button>
+            <button class="tab">🏆 Classement général</button>
+            <button class="tab">👥 Membres</button>
             </div>
-            <div class="modal-body">
-                <p>Partagez ce code d'invitation avec vos amis :</p>
-                <div class="invite-code-container mb-3">
-                    <input type="text" value="{{ $league->invite_code }}" class="form-control" id="modalInviteCode" readonly>
-                    <button class="btn btn-outline-light" onclick="copyModalInviteCode()">
-                        <i class="fas fa-copy"></i>
-                    </button>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <div class="leaderboard-header">
+                <div>POSITION</div>
+                <div>MEMBRE</div>
+                <div>SCORE TOTAL</div>
+                <div>MEMBRE DEPUIS</div>
+            </div>
+
+            @foreach($weeklyLeaderboard as $member)
+            <div class="leaderboard-item">
+                <div class="position">{{ $member->pivot->position }}</div>
+                <div class="member-info">
+                    <div class="member-avatar">{{ substr($member->name, 0, 1) }}</div>
+                    <div class="member-name">{{ $member->name }}</div>
+                </div>
+                <div class="score">{{ $member->pivot->weekly_score }}</div>
+                <div class="join-date">30/05/2025</div>
+            </div>
+            @endforeach
+        </div>
+        
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <h3 class="stats-title">📊 Statistiques de la ligue</h3>
+                            <div class="stat-item">
+                <span class="stat-label">Membres</span>
+                <span class="stat-value">1 / 50</span>
+                            </div>
+                            <div class="stat-item">
+                <span class="stat-label">Score moyen</span>
+                <span class="stat-value">18.0</span>
+                            </div>
+                            <div class="stat-item">
+                <span class="stat-label">Posts cette semaine</span>
+                <span class="stat-value">12</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Défis actifs</span>
+                <span class="stat-value">3</span>
+            </div>
                 </div>
                 
-                <p>Ou partagez le lien direct :</p>
-                <div class="invite-code-container">
-                    <input type="text" value="{{ url('/leagues/join?code=' . $league->invite_code) }}" class="form-control" id="inviteLink" readonly>
-                    <button class="btn btn-outline-light" onclick="copyInviteLink()">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <!-- Share Section -->
+        <div class="share-section">
+            <h3 class="share-title">🔗 Partager cette ligue</h3>
+            <p class="share-description">Partagez ce code d'invitation avec vos amis pour qu'ils rejoignent votre ligue :</p>
+            <div class="invite-code">
+                <span class="code-text">vo8dswoWc9</span>
+                <button class="copy-btn" onclick="copyToClipboard()">📋</button>
             </div>
         </div>
+
+        <!-- Spacing for bottom nav -->
+        <div style="height: 100px;"></div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="{{ route('home') }}" class="bottom-nav-item">
+                <div class="bottom-nav-icon">🔍</div>
+                <div class="bottom-nav-label">Découvrir</div>
+            </a>
+            <a href="{{ route('social.feed') }}" class="bottom-nav-item">
+                <div class="bottom-nav-icon">📱</div>
+                <div class="bottom-nav-label">Communauté</div>
+            </a>
+            <a href="{{ route('leagues.index') }}" class="bottom-nav-item active">
+                <div class="bottom-nav-icon">🏆</div>
+                <div class="bottom-nav-label">Ligues</div>
+            </a>
+            <a href="{{ route('profile.show') }}" class="bottom-nav-item">
+                <div class="bottom-nav-icon">👤</div>
+                <div class="bottom-nav-label">Profil</div>
+            </a>
+        </nav>
     </div>
-</div>
-
-<style>
-.league-description {
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 10px;
-    font-style: italic;
-}
-
-.stat-item {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 10px;
-}
-
-.stat-label {
-    color: #999;
-    font-size: 0.9rem;
-    margin-bottom: 5px;
-}
-
-.stat-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.invite-code-container {
-    display: flex;
-    gap: 10px;
-}
-
-.invite-code-container .form-control {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-}
-
-.nav-tabs .nav-link {
-    color: rgba(255, 255, 255, 0.7);
-    border: none;
-    padding: 10px 15px;
-}
-
-.nav-tabs .nav-link:hover {
-    color: white;
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.nav-tabs .nav-link.active {
-    color: white;
-    background-color: transparent;
-    border-bottom: 2px solid white;
-}
-
-.gap-2 {
-    gap: 0.5rem;
-}
-</style>
 
 <script>
-function copyInviteCode() {
-    const inviteCode = document.getElementById('inviteCode');
-    inviteCode.select();
-    document.execCommand('copy');
-    alert('Code d\'invitation copié !');
-}
+        // Gestion des onglets
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Retirer la classe active de tous les onglets
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                
+                // Ajouter la classe active à l'onglet cliqué
+                tab.classList.add('active');
+                
+                // Feedback visuel immédiat
+                tab.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    tab.style.transform = 'scale(1)';
+                }, 150);
+                
+                // Animation des éléments du leaderboard
+                const items = document.querySelectorAll('.leaderboard-item');
+                items.forEach((item, index) => {
+                    item.style.opacity = '0.5';
+                    item.style.transform = 'translateY(10px)';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+                
+                // Log pour debug
+                console.log('Onglet cliqué:', tab.textContent);
+            });
+        });
 
-function copyModalInviteCode() {
-    const modalInviteCode = document.getElementById('modalInviteCode');
-    modalInviteCode.select();
-    document.execCommand('copy');
-    alert('Code d\'invitation copié !');
-}
+        // Fonction de copie du code d'invitation
+        function copyToClipboard() {
+            const codeText = document.querySelector('.code-text').textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✓';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#333333';
+                }, 2000);
+            });
+        }
 
-function copyInviteLink() {
-    const inviteLink = document.getElementById('inviteLink');
-    inviteLink.select();
-    document.execCommand('copy');
-    alert('Lien d\'invitation copié !');
-}
+        // Animation d'apparition des éléments
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.leaderboard-item, .stats-section, .share-section').forEach((element, index) => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'all 0.6s ease';
+            element.style.animationDelay = `${index * 0.1}s`;
+            observer.observe(element);
+        });
+
+        // Interaction avec les éléments du leaderboard
+        document.querySelectorAll('.leaderboard-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Animation de sélection
+                item.style.background = '#1a1a1a';
+                setTimeout(() => {
+                    item.style.background = '#111111';
+                }, 200);
+            });
+        });
+
+        // Fonction pour confirmer la sortie de la ligue
+        function confirmLeaveLeague() {
+            if (confirm('Êtes-vous sûr de vouloir quitter cette ligue ? Cette action est irréversible.')) {
+                // Ici vous pouvez ajouter la logique pour quitter la ligue
+                // Par exemple : window.location.href = '/leagues/LEAGUE_SLUG/leave';
+                alert('Fonctionnalité de sortie de ligue à implémenter');
+            }
+        }
+
+        // Fonction pour faire défiler vers la section d'invitation
+        function scrollToInvite() {
+            const shareSection = document.querySelector('.share-section');
+            if (shareSection) {
+                shareSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                
+                // Animation d'attention sur le code d'invitation
+                const inviteCode = document.querySelector('.invite-code');
+                if (inviteCode) {
+                    inviteCode.style.animation = 'pulse 1s ease-in-out 2';
+                }
+            }
+        }
+
+        // Animation pulse pour le code d'invitation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
 </script>
-@endsection 
+</body>
+</html> 

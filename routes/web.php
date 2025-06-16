@@ -9,17 +9,27 @@ use App\Http\Controllers\BetaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// Routes de diagnostic (gardées pour debug)
+// Page d'accueil principale - Landing page ZYMA
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+
+// Routes de test rapide
 Route::get('/test', function () {
-    return "ZYMA is working!";
+    return "ZYMA is working perfectly!";
 });
+
+// Route publique temporaire pour tester l'interface moderne
+Route::get('/demo-interface', function () {
+    return view('products.search');
+})->name('demo.interface');
 
 Route::get('/health', function () {
     return response()->json([
         'status' => 'OK',
-        'timestamp' => now(),
         'app' => 'ZYMA',
-        'env' => 'production'
+        'version' => '1.0-local',
+        'timestamp' => now()
     ]);
 });
 
@@ -30,52 +40,6 @@ Route::get('/db-test', function () {
     } catch (\Exception $e) {
         return response()->json(['db_status' => 'Failed', 'error' => $e->getMessage()]);
     }
-});
-
-// ROUTES ULTRA-BASIQUES - AUCUNE DÉPENDANCE
-Route::get('/', function () {
-    return '<!DOCTYPE html>
-<html>
-<head>
-    <title>ZYMA Beta</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: white; }
-        .container { max-width: 600px; margin: 0 auto; background: #16213e; padding: 40px; border-radius: 15px; }
-        h1 { color: #00d4aa; margin-bottom: 20px; font-size: 3em; }
-        .status { background: #28a745; color: white; padding: 15px; border-radius: 8px; margin: 20px 0; }
-        .links a { display: inline-block; margin: 10px; padding: 15px 25px; background: #007bff; color: white; text-decoration: none; border-radius: 8px; }
-        .beta-info { background: #0d6efd; padding: 20px; border-radius: 8px; margin: 20px 0; }
-        .debug { background: #6c757d; padding: 15px; border-radius: 8px; margin: 10px 0; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🚀 ZYMA BETA</h1>
-        <div class="status">✅ Application en ligne !</div>
-        
-        <div class="beta-info">
-            <h2>🔐 Accès Beta Privé</h2>
-            <p>Version de test déployée avec succès</p>
-        </div>
-        
-        <div class="debug">
-            <strong>Debug Info:</strong><br>
-            PHP: ' . PHP_VERSION . '<br>
-            Timestamp: ' . date('Y-m-d H:i:s') . '<br>
-            Status: ONLINE
-        </div>
-        
-        <div class="links">
-            <a href="/simple">Test Simple</a>
-            <a href="/env-check">Check ENV</a>
-        </div>
-        
-        <p style="margin-top: 30px; color: #6c757d;">
-            ZYMA v1.0 - ' . date('d/m/Y H:i') . '
-        </p>
-    </div>
-</body>
-</html>';
 });
 
 // Test ultra-simple
@@ -113,19 +77,106 @@ Route::post('/beta/verify', [BetaController::class, 'verifyCode'])->name('beta.v
 // Routes d'authentification
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Dashboard après connexion
+Route::get('/dashboard', function () {
+    return redirect()->route('home');
+})->middleware(['auth'])->name('dashboard');
 
 // Routes protégées par authentification
 Route::middleware(['auth'])->group(function () {
+    
+    // Profil utilisateur
+    Route::get('/profile', function () {
+        return view('profile', ['user' => auth()->user()]);
+    })->name('profile.show');
+    
+    Route::get('/profile/edit', function () {
+        return view('profile.edit', ['user' => auth()->user()]);
+    })->name('profile.edit');
+    
+    Route::get('/profile/posts', function () {
+        return redirect()->route('profile.show');
+    })->name('profile.posts');
+    
+    Route::get('/profile/points', function () {
+        return redirect()->route('profile.show');
+    })->name('profile.points');
+    
+    Route::get('/profile/badges', function () {
+        return redirect()->route('profile.show');
+    })->name('profile.badges');
+    
+    Route::get('/leaderboard', function () {
+        return redirect()->route('leagues.index');
+    })->name('leaderboard.global');
+    
+    // Feed social - routes complètes avec logique BeReal
+    Route::get('/social', [SocialFeedController::class, 'index'])->name('social.feed');
+    Route::get('/social/create', [SocialFeedController::class, 'create'])->name('social.create');
+    Route::post('/social/store', [SocialFeedController::class, 'store'])->name('social.store');
+    Route::get('/social/{post}', [SocialFeedController::class, 'show'])->name('social.show');
+    Route::post('/social/{post}/like', [SocialFeedController::class, 'like'])->name('social.like');
+    Route::post('/social/{post}/comment', [SocialFeedController::class, 'comment'])->name('social.comment');
+    
+    Route::get('/feed', function () {
+        return redirect()->route('social.index');
+    })->name('feed');
+    
+    // Ligues - route avec données de démo
+    Route::get('/leagues', function () {
+        // Simuler une ligue pour la démo
+        $league = (object) [
+            'name' => 'Les Smimos',
+            'slug' => 'les-smimos',
+            'is_private' => true,
+            'creator' => (object) ['name' => 'Anouar Essakhi'],
+            'description' => 'Ligue privée créée par Anouar Essakhi',
+            'created_by' => auth()->id()
+        ];
+        
+        $weeklyLeaderboard = collect([
+            (object) [
+                'id' => auth()->id(),
+                'name' => 'Anouar Essakhi',
+                'avatar' => null,
+                'pivot' => (object) [
+                    'position' => 1,
+                    'weekly_score' => 18,
+                    'last_score_update' => now()->subDays(2)
+                ]
+            ]
+        ]);
+        
+        $monthlyLeaderboard = $weeklyLeaderboard;
+        $overallLeaderboard = $weeklyLeaderboard;
+        $isMember = true;
+        
+        return view('leagues.show', compact('league', 'weeklyLeaderboard', 'monthlyLeaderboard', 'overallLeaderboard', 'isMember'));
+    })->name('leagues.index');
+    
+    // Recherche produits
+    Route::get('/products', [OpenFoodFactsController::class, 'index'])->name('products.search');
+    
+    // Statistiques
+    Route::get('/stats', function () {
+        return view('stats');
+    })->name('stats');
+
     // Routes admin beta (protégées)
     Route::get('/beta/dashboard', [BetaController::class, 'dashboard'])->name('beta.dashboard');
     Route::get('/beta/codes', [BetaController::class, 'listCodes'])->name('beta.codes');
     Route::post('/beta/generate', [BetaController::class, 'generateCodes'])->name('beta.generate');
 
     // Routes principales de l'application
-    Route::get('/products', [OpenFoodFactsController::class, 'index'])->name('products.search');
     Route::post('/fetch', [OpenFoodFactsController::class, 'fetch'])->name('products.fetch');
     Route::get('/products/search', [OpenFoodFactsController::class, 'searchByName'])->name('products.searchByName');
     Route::get('/api/products/search', [OpenFoodFactsController::class, 'apiSearchByName'])->name('api.products.search');
     Route::get('/products/{id}', [OpenFoodFactsController::class, 'show'])->name('products.show');
 });
+
+// Routes Beta (pour lancement beta)
+Route::get('/beta', [App\Http\Controllers\BetaController::class, 'welcome'])->name('beta.welcome');
+Route::post('/beta/verify', [App\Http\Controllers\BetaController::class, 'verifyCode'])->name('beta.verify');
+Route::get('/beta/dashboard', [App\Http\Controllers\BetaController::class, 'dashboard'])->name('beta.dashboard')->middleware('auth');
+Route::get('/beta/codes', [App\Http\Controllers\BetaController::class, 'listCodes'])->name('beta.codes')->middleware('auth');
+Route::post('/beta/generate', [App\Http\Controllers\BetaController::class, 'generateCodes'])->name('beta.generate')->middleware('auth');

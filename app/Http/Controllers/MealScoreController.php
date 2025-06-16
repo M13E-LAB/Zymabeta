@@ -46,7 +46,7 @@ class MealScoreController extends Controller
             'visual_score' => $analysis['visual_score'],
             'diversity_score' => $analysis['diversity_score'],
             'feedback' => $analysis['feedback'],
-            'is_ai_scored' => true,
+                'is_ai_scored' => true,
             'ai_analysis' => $analysis['ai_data']
         ]);
         
@@ -278,13 +278,22 @@ class MealScoreController extends Controller
      */
     private function updateUserLeagueScores(User $user, $points)
     {
-        foreach ($user->leagues as $league) {
-            $league->updateMemberScore(
-                $user, 
-                $points, // weekly score
-                $points, // monthly score
-                $points  // total score
-            );
+        // Vérifier si l'utilisateur a des leagues et si la relation existe
+        if ($user->leagues && $user->leagues->count() > 0) {
+            foreach ($user->leagues as $league) {
+                $league->updateMemberScore(
+                    $user, 
+                    $points, // weekly score
+                    $points, // monthly score
+                    $points  // total score
+                );
+            }
+        } else {
+            // Log que l'utilisateur n'est dans aucune league
+            \Log::info('User has no leagues, skipping league score update', [
+                'user_id' => $user->id,
+                'points' => $points
+            ]);
         }
     }
 } 

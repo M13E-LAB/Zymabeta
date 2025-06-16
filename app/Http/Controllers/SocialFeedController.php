@@ -7,6 +7,7 @@ use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PointTransaction;
+use App\Models\League;
 
 class SocialFeedController extends Controller
 {
@@ -23,14 +24,83 @@ class SocialFeedController extends Controller
     /**
      * Display the social feed.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Récupérer les posts récents pour le feed
-        $posts = Post::with(['user', 'likes'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        // Filtres
+        $type = $request->input('type');
+        $league = $request->input('league');
+        $sort = $request->input('sort', 'latest');
         
-        return view('social.index', compact('posts'));
+        // Préparer la requête de base avec eager loading optimisé
+        $query = Post::with([
+            'user:id,name,avatar', 
+            'likes:id,user_id,likeable_id,likeable_type', 
+            'mealScore:id,post_id,total_score,nutrition_score,health_score'
+        ]);
+        
+        // Filtrer par type si spécifié
+        if ($type) {
+            $query->where('post_type', $type);
+        }
+        
+        // Filtrer par ligue si spécifiée
+        if ($league) {
+            $leagueModel = League::where('slug', $league)->first();
+            if ($leagueModel) {
+                $memberIds = $leagueModel->members()->pluck('users.id')->toArray();
+                $query->whereIn('user_id', $memberIds);
+            }
+        }
+        
+        // Tri des résultats
+        switch ($sort) {
+            case 'popular':
+                $query->withCount('likes')->orderBy('likes_count', 'desc');
+                break;
+            case 'score':
+                $query->join('meal_scores', 'posts.id', '=', 'meal_scores.post_id')
+                      ->orderBy('meal_scores.total_score', 'desc');
+                break;
+            default:
+                $query->latest();
+        }
+        
+        // Pagination avec limite réduite
+        $posts = $query->paginate(10);
+        
+        // Précharger les likes de l'utilisateur actuel
+        if (Auth::check()) {
+            $postIds = $posts->pluck('id');
+            $userLikes = \App\Models\Like::where('user_id', Auth::id())
+                ->whereIn('likeable_id', $postIds)
+                ->where('likeable_type', 'App\Models\Post')
+                ->pluck('likeable_id')
+                ->toArray();
+                
+            foreach ($posts as $post) {
+                $post->is_liked_by_user = in_array($post->id, $userLikes);
+            }
+        }
+        
+        // Ajouter les compteurs efficacement
+        foreach ($posts as $post) {
+            $post->likes_count = $post->likes->count();
+            $post->has_meal_score = $post->mealScore !== null;
+        }
+        
+        // Variables pour le style BeReal
+        $hasPostedToday = false;
+        $userTodayPost = null;
+        
+        if (Auth::check()) {
+            $userTodayPost = Post::where('user_id', Auth::id())
+                ->whereDate('created_at', today())
+                ->latest()
+                ->first();
+            $hasPostedToday = $userTodayPost !== null;
+        }
+        
+        return view('social.index', compact('posts', 'type', 'league', 'sort', 'hasPostedToday', 'userTodayPost'));
     }
 
     /**
@@ -46,6 +116,13 @@ class SocialFeedController extends Controller
      */
     public function store(Request $request)
     {
+        // Debug logging
+        \Log::info('Store method called', [
+            'has_image_file' => $request->hasFile('image'),
+            'has_captured_image' => $request->has('captured_image'),
+            'all_data' => $request->except(['_token', 'image'])
+        ]);
+
         $request->validate([
             'product_name' => 'required|string|max:255',
             'store_name' => 'required|string|max:255',
@@ -53,8 +130,15 @@ class SocialFeedController extends Controller
             'regular_price' => 'nullable|numeric|min:0',
             'description' => 'nullable|string|max:1000',
             'post_type' => 'required|in:price,deal,meal,review',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // Max 5MB
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // Max 5MB - make nullable for camera uploads
         ]);
+
+        // Vérifier qu'on a au moins une image (soit fichier, soit caméra)
+        if (!$request->hasFile('image') && !$request->has('captured_image')) {
+            return redirect()->back()
+                ->withErrors(['image' => 'Une image est requise'])
+                ->withInput();
+        }
         
         $post = new Post();
         $post->user_id = Auth::id();
@@ -66,11 +150,41 @@ class SocialFeedController extends Controller
         $post->post_type = $request->post_type;
         
         // Traitement de l'image
+        $imagePath = null;
+        
         if ($request->hasFile('image')) {
+            // Upload d'image classique (galerie)
             $image = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('uploads/posts'), $filename);
-            $post->image = '/uploads/posts/' . $filename;
+            $imagePath = '/uploads/posts/' . $filename;
+        } elseif ($request->has('captured_image')) {
+            // Image capturée par la caméra (blob)
+            $imageData = $request->input('captured_image');
+            if (strpos($imageData, 'data:image/') === 0) {
+                // C'est une image base64
+                $imageData = substr($imageData, strpos($imageData, ',') + 1);
+                $imageData = base64_decode($imageData);
+                
+                $filename = time() . '_' . uniqid() . '.jpg';
+                $filepath = public_path('uploads/posts/' . $filename);
+                
+                // Créer le dossier s'il n'existe pas
+                if (!file_exists(dirname($filepath))) {
+                    mkdir(dirname($filepath), 0755, true);
+                }
+                
+                file_put_contents($filepath, $imageData);
+                $imagePath = '/uploads/posts/' . $filename;
+            }
+        }
+        
+        if ($imagePath) {
+            $post->image = $imagePath;
+        } else {
+            return redirect()->back()
+                ->withErrors(['image' => 'Erreur lors du traitement de l\'image'])
+                ->withInput();
         }
         
         // Utilisation facultative de la géolocalisation
@@ -97,6 +211,8 @@ class SocialFeedController extends Controller
             $mealScoreController = new \App\Http\Controllers\MealScoreController();
             $mealScoreController->autoAnalyzeMeal($post);
         }
+
+        \Log::info('Post created successfully', ['post_id' => $post->id, 'image_path' => $imagePath]);
         
         return redirect()->route('social.feed')
             ->with('success', $post->post_type === 'meal' ? 'Votre repas a été partagé et analysé par notre IA ! 📸🍽️🤖' : 'Votre publication a été partagée avec succès !');

@@ -803,6 +803,182 @@
                 padding: 12px 20px !important;
                 font-size: 0.9rem !important;
             }
+            
+            /* Navbar responsive */
+            .navbar {
+                padding: 0.8rem 0 !important;
+            }
+            
+            .nav-container {
+                flex-direction: column !important;
+                gap: 12px !important;
+                padding: 0 12px !important;
+            }
+            
+            .navbar-brand {
+                font-size: 1.8rem !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap !important;
+                gap: 6px !important;
+                justify-content: center !important;
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            .nav-link {
+                padding: 8px 12px !important;
+                font-size: 0.8rem !important;
+                min-height: 36px !important;
+                border-radius: 20px !important;
+                flex: 1 1 auto !important;
+                max-width: 120px !important;
+                text-align: center !important;
+            }
+            
+            /* Masquer le texte sur très petits écrans */
+            @media (max-width: 480px) {
+                .nav-link i {
+                    margin-right: 0 !important;
+                }
+                
+                .nav-link {
+                    font-size: 0 !important;
+                    padding: 8px !important;
+                    width: 40px !important;
+                    max-width: 40px !important;
+                }
+                
+                .nav-link i {
+                    font-size: 1rem !important;
+                }
+            }
+            
+            /* Formulaire de recherche responsive */
+            .search-product-form {
+                order: -1 !important;
+                width: 100% !important;
+                max-width: 300px !important;
+                margin: 0 auto 8px auto !important;
+            }
+            
+            .search-product-input {
+                font-size: 14px !important;
+                padding: 8px 12px !important;
+                height: 36px !important;
+            }
+            
+            /* Dropdown utilisateur responsive */
+            .dropdown {
+                margin-top: 8px !important;
+            }
+            
+            .dropdown-toggle {
+                padding: 8px 16px !important;
+                font-size: 0.85rem !important;
+                border-radius: 20px !important;
+            }
+            
+            .user-points {
+                padding: 4px 8px !important;
+                font-size: 0.7rem !important;
+                margin-left: 6px !important;
+            }
+            
+            .avatar-small {
+                width: 24px !important;
+                height: 24px !important;
+            }
+            
+            /* Boutons de connexion responsive */
+            .btn-secondary, .btn-primary {
+                padding: 8px 16px !important;
+                font-size: 0.85rem !important;
+                min-height: 36px !important;
+            }
+        }
+        
+        /* Styles pour le formulaire de recherche inline */
+        .search-product-form {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: rgba(30, 30, 30, 0.8) !important;
+            border: 2px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: var(--btn-radius) !important;
+            backdrop-filter: blur(10px) !important;
+            transition: var(--btn-transition) !important;
+            height: 44px;
+            max-width: 250px;
+        }
+        
+        .search-product-form:focus-within {
+            border-color: var(--btn-border-blue) !important;
+            box-shadow: var(--btn-shadow) !important;
+        }
+        
+        .search-product-icon {
+            color: var(--text-secondary);
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-product-input {
+            background: transparent !important;
+            border: none !important;
+            color: var(--btn-text-white) !important;
+            font-weight: 500 !important;
+            flex: 1;
+            padding: 0 12px 0 0 !important;
+            font-size: 0.9rem !important;
+            height: 40px;
+        }
+        
+        .search-product-input:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
+        .search-product-input::placeholder {
+            color: var(--text-secondary) !important;
+        }
+        
+        .autocomplete-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(15, 15, 15, 0.98) !important;
+            border: 2px solid var(--btn-border-blue) !important;
+            border-radius: 12px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 9999;
+            display: none;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        }
+        
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--btn-transition);
+            color: var(--btn-text-white) !important;
+            font-weight: 500;
+        }
+        
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        
+        .autocomplete-item:hover {
+            background: rgba(52, 152, 219, 0.2) !important;
+            color: var(--btn-border-blue) !important;
         }
     </style>
 </head>

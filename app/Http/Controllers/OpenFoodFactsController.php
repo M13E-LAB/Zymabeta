@@ -15,18 +15,8 @@ class OpenFoodFactsController extends Controller
 
     public function index()
     {
-        // Temporaire : retourner une réponse simple pour éviter l'erreur 500
-        return response()->json([
-            'message' => 'ZYMA API is working!',
-            'status' => 'success',
-            'endpoints' => [
-                '/health' => 'Health check',
-                '/db-test' => 'Database test',
-                '/test' => 'Simple test'
-            ]
-        ]);
-        
-        // return view('products.search');
+        // Retourner la vue de recherche moderne
+        return view('products.search');
     }
 
     public function fetch(Request $request)

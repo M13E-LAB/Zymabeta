@@ -1,195 +1,400 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - ZYMA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-@section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card h-100 position-relative overflow-hidden">
-                <div class="card-body p-5">
-                    <h2 class="display-5 mb-4">Rejoignez ZYMA</h2>
-                    <p class="text-secondary mb-4">Découvrez, partagez et économisez sur vos produits préférés.</p>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
 
-                    <form method="POST" action="{{ route('register') }}" class="mb-4">
-                        @csrf
-                        
-                        <div class="mb-4">
-                            <label for="name" class="form-label">Nom complet</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus placeholder="Votre nom">
-                            </div>
-                            @error('name')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+        .container {
+            max-width: 430px;
+            width: 100%;
+            padding: 20px;
+            background: #000000;
+        }
 
-                        <div class="mb-4">
-                            <label for="email" class="form-label">Adresse email</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="votre@email.com">
-                            </div>
-                            @error('email')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
 
-                        <div class="mb-4">
-                            <label for="password" class="form-label">Mot de passe</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="8 caractères minimum">
-                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                            <div class="password-strength mt-2 d-none" id="passwordStrength">
-                                <div class="progress" style="height: 5px;">
-                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <small class="text-secondary" id="passwordStrengthText">Faible</small>
-                            </div>
-                            @error('password')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 24px;
+            font-weight: 900;
+        }
 
-                        <div class="mb-4">
-                            <label for="password-confirm" class="form-label">Confirmer le mot de passe</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="Répétez votre mot de passe">
-                            </div>
-                        </div>
+        .app-name {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-                        <div class="mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="terms" id="terms" required>
-                                <label class="form-check-label" for="terms">
-                                    J'accepte les <a href="#" class="text-decoration-none">conditions d'utilisation</a> et la <a href="#" class="text-decoration-none">politique de confidentialité</a>
-                                </label>
-                            </div>
-                        </div>
+        .app-tagline {
+            font-size: 14px;
+            color: #888888;
+        }
 
-                        <div class="mb-4">
-                            <button type="submit" class="btn btn-primary btn-lg w-100">
-                                <i class="fas fa-user-plus me-2"></i> Créer mon compte
-                            </button>
-                        </div>
-                        
-                        <div class="text-center">
-                            <p class="mb-0">Vous avez déjà un compte ? <a href="{{ route('login') }}" class="text-decoration-none">Connectez-vous</a></p>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="position-absolute bottom-0 end-0 p-4 d-none d-lg-block">
-                    <img src="https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_960_720.png" alt="Food" style="width: 200px; opacity: 0.1;">
-                </div>
-            </div>
+        /* Form */
+        .register-form {
+            background: #111111;
+            border-radius: 24px;
+            border: 1px solid #1a1a1a;
+            padding: 32px 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 1px solid #333333;
+            background: #1a1a1a;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007AFF;
+            background: #222222;
+            transform: scale(1.02);
+        }
+
+        .form-input.error {
+            border-color: #FF3B30;
+            background: rgba(255, 59, 48, 0.1);
+        }
+
+        .error-message {
+            color: #FF3B30;
+            font-size: 14px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .password-strength {
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: #333333;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            background: #FF3B30;
+            width: 0%;
+            transition: all 0.3s ease;
+        }
+
+        .strength-fill.weak { background: #FF3B30; }
+        .strength-fill.medium { background: #FF9500; }
+        .strength-fill.strong { background: #10b981; }
+
+        .strength-text {
+            font-size: 12px;
+            color: #888888;
+        }
+
+        .terms-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid #333333;
+            background: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checkbox:checked {
+            background: #007AFF;
+            border-color: #007AFF;
+        }
+
+        .terms-text {
+            font-size: 14px;
+            color: #cccccc;
+            line-height: 1.4;
+        }
+
+        .terms-text a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+
+        .terms-text a:hover {
+            text-decoration: underline;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 18px 24px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
+        }
+
+        .register-btn:active {
+            transform: translateY(0);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Login Section */
+        .login-section {
+            text-align: center;
+            padding: 24px;
+            background: #111111;
+            border-radius: 24px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .login-text {
+            color: #888888;
+            margin-bottom: 16px;
+        }
+
+        .login-btn {
+            color: #007AFF;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 24px;
+            border: 1px solid #007AFF;
+            border-radius: 12px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #007AFF;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333333;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-height: 800px) {
+            .logo-section {
+                margin-bottom: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo">🍎</div>
+            <h1 class="app-name">ZYMA</h1>
         </div>
 
-        <div class="col-lg-6 mb-4">
-            <div class="card h-100 p-0 overflow-hidden">
-                <div class="card-body p-5">
-                    <h3 class="mb-4">Pourquoi rejoindre ZYMA ?</h3>
-                    
-                    <div class="mb-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="badge-item earned me-3">
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Gagnez des points</h5>
-                                <p class="mb-0 text-secondary">Recevez des récompenses pour chaque contribution au sein de la communauté.</p>
-                            </div>
+        <!-- Register Form -->
+        <div class="register-form">
+            <h2 class="form-title">Créer un compte</h2>
+            
+            <form method="POST" action="{{ route('register') }}" id="registerForm">
+                @csrf
+
+                <div class="form-group">
+                    <label class="form-label" for="name">Nom complet</label>
+                    <input id="name" type="text" class="form-input @error('name') error @enderror" 
+                           name="name" value="{{ old('name') }}" required autocomplete="name" autofocus
+                           placeholder="Votre nom complet">
+                    @error('name')
+                        <div class="error-message">
+                            ⚠️ {{ $message }}
                         </div>
-                        
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="badge-item earned me-3">
-                                <i class="fas fa-store"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Découvrez les meilleures offres</h5>
-                                <p class="mb-0 text-secondary">Trouvez les promotions près de chez vous grâce aux partages de la communauté.</p>
-                            </div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Adresse email</label>
+                    <input id="email" type="email" class="form-input @error('email') error @enderror" 
+                           name="email" value="{{ old('email') }}" required autocomplete="email"
+                           placeholder="votre@email.com">
+                    @error('email')
+                        <div class="error-message">
+                            ⚠️ {{ $message }}
                         </div>
-                        
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="badge-item earned me-3">
-                                <i class="fas fa-camera"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Partagez vos trouvailles</h5>
-                                <p class="mb-0 text-secondary">Prenez des photos de vos produits préférés et partagez-les instantanément.</p>
-                            </div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Mot de passe</label>
+                    <input id="password" type="password" class="form-input @error('password') error @enderror" 
+                           name="password" required autocomplete="new-password"
+                           placeholder="8 caractères minimum">
+                    <div class="password-strength" id="passwordStrength" style="display: none;">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
                         </div>
-                        
-                        <div class="d-flex align-items-center">
-                            <div class="badge-item earned me-3">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Rejoignez une communauté</h5>
-                                <p class="mb-0 text-secondary">Connectez-vous avec d'autres passionnés de bonnes affaires et de découvertes culinaires.</p>
-                            </div>
-                        </div>
+                        <div class="strength-text" id="strengthText">Faible</div>
                     </div>
-                    
-                    <div class="card" style="background: var(--bg-tertiary);">
-                        <div class="card-body p-3">
-                            <h5 class="mb-2">Progression des nouveaux membres</h5>
-                            <div class="progress mb-2" style="height: 10px;">
-                                <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <small>Déjà <span class="text-success">+2500</span> membres</small>
-                                <small>Objectif: 5000</small>
-                            </div>
+                    @error('password')
+                        <div class="error-message">
+                            ⚠️ {{ $message }}
                         </div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password_confirmation">Confirmer le mot de passe</label>
+                    <input id="password_confirmation" type="password" class="form-input" 
+                           name="password_confirmation" required autocomplete="new-password"
+                           placeholder="Répétez votre mot de passe">
+                </div>
+
+                <div class="terms-section">
+                    <input class="checkbox" type="checkbox" name="terms" id="terms" required>
+                    <div class="terms-text">
+                        J'accepte les <a href="#">conditions d'utilisation</a> et la <a href="#">politique de confidentialité</a> de ZYMA
                     </div>
                 </div>
-                
-                <div class="position-relative">
-                    <div class="card-img-overlay d-flex align-items-center justify-content-center" style="background-color: rgba(0, 0, 0, 0.4); height: 250px;">
-                        <div class="text-center">
-                            <h3 class="text-white mb-0">Commencez votre aventure dès maintenant</h3>
-                        </div>
+
+                <button type="submit" class="register-btn" id="registerBtn">
+                    <span class="btn-text">Créer mon compte</span>
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Création...</span>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" class="card-img-bottom" alt="Food Market" style="height: 250px; object-fit: cover;">
-                </div>
-            </div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Login Section -->
+        <div class="login-section">
+            <p class="login-text">Vous avez déjà un compte ?</p>
+            <a href="{{ route('login') }}" class="login-btn">Se connecter</a>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle password visibility
-        const togglePassword = document.getElementById('togglePassword');
-        const password = document.getElementById('password');
-        
-        togglePassword.addEventListener('click', function() {
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            this.querySelector('i').classList.toggle('fa-eye');
-            this.querySelector('i').classList.toggle('fa-eye-slash');
+    <script>
+        // Animation des champs de formulaire
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
         });
-        
+
         // Password strength meter
         const passwordInput = document.getElementById('password');
-        const strengthBar = document.querySelector('#passwordStrength .progress-bar');
-        const strengthText = document.getElementById('passwordStrengthText');
         const strengthContainer = document.getElementById('passwordStrength');
-        
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+
         passwordInput.addEventListener('input', function() {
-            const value = passwordInput.value;
+            const value = this.value;
             
             if (value.length > 0) {
-                strengthContainer.classList.remove('d-none');
+                strengthContainer.style.display = 'block';
                 
-                // Calculate strength
                 let strength = 0;
+                let strengthClass = 'weak';
+                let strengthLabel = 'Faible';
                 
                 // Length
                 if (value.length >= 8) strength += 25;
@@ -200,41 +405,67 @@
                 // Lowercase
                 if (/[a-z]/.test(value)) strength += 25;
                 
-                // Numbers or special chars
-                if (/[0-9!@#$%^&*(),.?":{}|<>]/.test(value)) strength += 25;
+                // Numbers or symbols
+                if (/[0-9]/.test(value) || /[^A-Za-z0-9]/.test(value)) strength += 25;
                 
-                // Update UI
-                strengthBar.style.width = strength + '%';
-                
-                if (strength < 25) {
-                    strengthBar.className = 'progress-bar bg-danger';
-                    strengthText.textContent = 'Très faible';
-                } else if (strength < 50) {
-                    strengthBar.className = 'progress-bar bg-warning';
-                    strengthText.textContent = 'Faible';
-                } else if (strength < 75) {
-                    strengthBar.className = 'progress-bar bg-info';
-                    strengthText.textContent = 'Moyen';
-                } else {
-                    strengthBar.className = 'progress-bar bg-success';
-                    strengthText.textContent = 'Fort';
+                // Update visual
+                if (strength >= 75) {
+                    strengthClass = 'strong';
+                    strengthLabel = 'Fort';
+                } else if (strength >= 50) {
+                    strengthClass = 'medium';
+                    strengthLabel = 'Moyen';
                 }
+                
+                strengthFill.style.width = strength + '%';
+                strengthFill.className = 'strength-fill ' + strengthClass;
+                strengthText.textContent = strengthLabel;
             } else {
-                strengthContainer.classList.add('d-none');
+                strengthContainer.style.display = 'none';
             }
         });
-        
-        // Animated entrance
-        document.querySelectorAll('.card').forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+        // Gestion du formulaire d'inscription
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const registerBtn = document.getElementById('registerBtn');
+            const btnText = registerBtn.querySelector('.btn-text');
+            const loading = registerBtn.querySelector('.loading');
             
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, 100 * (index + 1));
+            // Afficher l'état de chargement
+            btnText.style.display = 'none';
+            loading.style.display = 'flex';
+            registerBtn.disabled = true;
+            
+            // Feedback haptique
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
         });
-    });
-</script>
-@endsection
+
+        // Animation du bouton
+        document.querySelector('.register-btn').addEventListener('click', function() {
+            if (!this.disabled) {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            }
+        });
+
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.logo-section, .register-form, .login-section');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'all 0.6s ease';
+                
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+    </script>
+</body>
+</html>

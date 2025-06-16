@@ -1,338 +1,130 @@
 @extends('layouts.app')
 
+@section('title', 'Recherche - ZYMA')
+
 @section('content')
-<div class="zyma-container">
-    <!-- Navigation avec barre de recherche intégrée -->
-    <nav class="zyma-nav">
-        <div class="logo-container">
-            <h1 class="zyma-logo">ZYMA</h1>
-            <div class="tagline">La communauté des mangeurs malins</div>
-        </div>
-        <div class="nav-links">
-            <a href="{{ route('products.search') }}" class="nav-link">Découvrir</a>
-            <a href="{{ route('social.feed') }}" class="nav-link">Communauté</a>
-            @if(auth()->check())
-                <a href="{{ route('profile.show') }}" class="nav-link">Mon Profil</a>
-            @else
-                <a href="{{ route('login') }}" class="btn-connexion">Connexion</a>
-            @endif
-        </div>
-    </nav>
-
-    <!-- Section héro avec scanner et comparateur -->
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">Mangez mieux.<br>Dépensez moins.</h1>
-            <p class="hero-subtitle">
-                Scannez, comparez, échangez, et grimpez dans les ligues du mieux-manger.
-            </p>
-            
-            <div class="search-container">
-                <div class="search-tabs">
-                    <button class="search-tab active" data-tab="barcode">
-                        <i class="fas fa-barcode"></i> Code-barres
-                    </button>
-                    <button class="search-tab" data-tab="name">
-                        <i class="fas fa-shopping-basket"></i> Nom du produit
-                    </button>
-                    <button class="search-tab" data-tab="camera">
-                        <i class="fas fa-camera"></i> Photo
-                    </button>
-                </div>
-                
-                <div class="search-box" id="barcode-search">
-                    <form action="{{ route('products.fetch') }}" method="POST">
-                        @csrf
-                        <div class="input-group">
-                            <div class="input-icon">
-                                <i class="fas fa-barcode"></i>
-                            </div>
-                            <input type="text" name="product_code" class="search-input" 
-                                   placeholder="Scannez ou entrez un code-barres..." required>
-                            <button type="submit" class="btn-primary">
-                                <i class="fas fa-search"></i> Comparer
-                            </button>
-                        </div>
-                    </form>
-                    <div class="text-center mt-3">
-                        <button id="start-barcode-scanner" class="btn-outline">
-                            <i class="fas fa-barcode"></i> Scanner un code-barres
-                        </button>
-                    </div>
-                    <div id="barcode-scanner" style="display:none; margin-top:1rem;"></div>
-                </div>
-
-                <div class="search-box hidden" id="name-search">
-                    <form action="{{ route('products.searchByName') }}" method="GET">
-                        <div class="input-group">
-                            <div class="input-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <input type="text" name="query" class="search-input" id="productNameInput"
-                                   placeholder="Entrez le nom d'un produit..." required autocomplete="off">
-                            <button type="submit" class="btn-primary">
-                                <i class="fas fa-search"></i> Rechercher
-                            </button>
-                        </div>
-                    </form>
-                    <div class="name-autocomplete" id="nameAutocomplete"></div>
-                </div>
-                
-                <div class="search-box hidden" id="camera-search">
-                    <div class="camera-preview">
-                        <video id="camera-preview" autoplay playsinline class="hidden"></video>
-                        <div id="camera-placeholder">
-                            <i class="fas fa-camera-retro"></i>
-                            <p>Prenez une photo de votre produit</p>
-                        </div>
-                        <canvas id="photo-canvas" class="hidden"></canvas>
-                        <img id="captured-image" class="img-fluid hidden" alt="Captured image">
-                    </div>
-                    <div class="camera-controls">
-                        <button id="start-camera" class="btn-outline">
-                            <i class="fas fa-camera"></i> Activer l'appareil photo
-                        </button>
-                        <button id="capture-photo" class="btn-primary hidden">
-                            <i class="fas fa-camera"></i> Prendre une photo
-                        </button>
-                        <button id="retake-photo" class="btn-outline hidden">
-                            <i class="fas fa-redo"></i> Reprendre
-                        </button>
-                        <button id="upload-photo" class="btn-primary hidden">
-                            <i class="fas fa-upload"></i> Analyser ce produit
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Animations et éléments graphiques -->
-        <div class="background-graphics">
-            <div class="food-icon fruit" style="top: 15%; left: 10%;">
-                <i class="fas fa-apple-alt"></i>
-            </div>
-            <div class="food-icon vegetable" style="top: 70%; left: 15%;">
-                <i class="fas fa-carrot"></i>
-            </div>
-            <div class="food-icon grain" style="top: 30%; right: 12%;">
-                <i class="fas fa-bread-slice"></i>
-            </div>
-            <div class="food-icon protein" style="top: 60%; right: 8%;">
-                <i class="fas fa-egg"></i>
-            </div>
-            <div class="food-icon dairy" style="top: 40%; left: 85%;">
-                <i class="fas fa-cheese"></i>
-            </div>
-            <div class="price-bubble small" style="top: 25%; right: 25%;">
-                <span>-30%</span>
-            </div>
-            <div class="price-bubble medium" style="top: 65%; left: 25%;">
-                <span>-15%</span>
-            </div>
-            <div class="price-bubble large" style="top: 50%; right: 30%;">
-                <span>-50%</span>
-            </div>
-        </div>
-    </div>
-</div>
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Recherche - ZYMA</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
-/* Variables et resets */
+/* Variables CSS et reset */
 :root {
     --bg-dark: #111111;
     --bg-card: #1a1a1a;
-    --bg-light: #222222;
+    --bg-input: #222222;
     --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-muted: rgba(255, 255, 255, 0.5);
-    --accent-primary: #3498DB;
-    --accent-secondary: #4CAF50;
-    --accent-tertiary: #3498db;
-    --gradient-primary: linear-gradient(135deg, #3498DB, #5DADE2);
-    --gradient-secondary: linear-gradient(135deg, #4CAF50, #8BC34A);
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
-    --shadow-strong: 0 15px 35px rgba(0, 0, 0, 0.2);
-    --radius-sm: 8px;
-    --radius-md: 16px;
-    --radius-lg: 24px;
-    --font-sans: 'Inter', sans-serif;
+    --text-secondary: #b0b0b0;
+    --text-muted: #777777;
+    --accent-blue: #3498db;
+    --accent-green: #4CAF50;
+    --accent-orange: #ff6b35;
+    --border-dark: #333333;
+    --gradient-primary: linear-gradient(135deg, #3498db 0%, #1d4ed8 100%);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --radius: 16px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font: 'Inter', sans-serif;
 }
 
-body, html {
+* {
     margin: 0;
     padding: 0;
-    font-family: var(--font-sans);
-    background-color: var(--bg-dark);
-    color: var(--text-primary);
-    overflow-x: hidden;
-    line-height: 1.6;
+    box-sizing: border-box;
 }
 
-/* Container principal */
-.zyma-container {
-    display: flex;
-    flex-direction: column;
+body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: var(--font);
+    overflow-x: hidden;
     min-height: 100vh;
 }
 
-/* Navigation modernisée */
-.zyma-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 2rem;
-    position: fixed;
+/* Conteneur mobile principal */
+.mobile-container {
+    max-width: 430px;
+    margin: 0 auto;
+    background: var(--bg-dark);
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 100px;
+}
+
+/* Header mobile */
+.mobile-header {
+    background: var(--bg-dark);
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border-dark);
+    position: sticky;
     top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background: rgba(15, 15, 15, 0.95) !important;
-    border-bottom: 2px solid var(--accent-primary);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15);
+    z-index: 100;
 }
 
-.logo-container {
+.header-top {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
 }
 
-.zyma-logo {
+.logo {
+    font-size: 28px;
     font-weight: 800;
-    font-size: 2.2rem;
-    margin: 0;
     background: var(--gradient-primary);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: -1px;
-    transition: all 0.3s ease;
+    letter-spacing: -0.5px;
 }
 
-.zyma-logo:hover {
-    transform: scale(1.05);
-}
-
-.tagline {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: -0.3rem;
-    letter-spacing: 0.05rem;
-    font-weight: 400;
-}
-
-.nav-links {
+.header-actions {
     display: flex;
-    gap: 0.5rem;
     align-items: center;
+    gap: 12px;
 }
 
-.nav-link {
-    background: rgba(30, 30, 30, 0.8) !important;
-    border: 2px solid rgba(255, 255, 255, 0.2) !important;
-    color: var(--text-primary) !important;
-    font-weight: 600 !important;
-    text-decoration: none !important;
-    padding: 12px 24px !important;
-    border-radius: 50px !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    font-size: 0.95rem !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    min-height: 44px !important;
-    backdrop-filter: blur(10px) !important;
-}
-
-.nav-link:hover {
-    background: rgba(15, 15, 15, 0.95) !important;
-    border-color: var(--accent-primary) !important;
-    color: var(--text-primary) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15) !important;
-}
-
-.btn-connexion {
-    background: rgba(15, 15, 15, 0.95) !important;
-    border: 2px solid var(--accent-primary) !important;
-    color: var(--text-primary) !important;
-    padding: 12px 24px !important;
-    border-radius: 50px !important;
-    font-weight: 600 !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    text-decoration: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    backdrop-filter: blur(10px) !important;
-    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15) !important;
-}
-
-.btn-connexion:hover {
-    background: rgba(25, 25, 25, 0.98) !important;
-    color: var(--accent-primary) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 32px rgba(52, 152, 219, 0.25) !important;
-}
-
-/* Section héro */
-.hero-section {
-    padding-top: 5rem;
-    min-height: 100vh;
+.back-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 12px;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
-    background-color: var(--bg-dark);
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    font-size: 18px;
 }
 
-.hero-content {
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+.search-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
     text-align: center;
-    z-index: 10;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
 }
 
-.hero-title {
-    font-size: 4.5rem;
-    font-weight: 800;
-    margin-bottom: 1.5rem;
-    line-height: 1.1;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: fadeInUp 1s ease-out;
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    color: var(--text-secondary);
-    margin-bottom: 3rem;
-    line-height: 1.6;
-    animation: fadeInUp 1s ease-out 0.2s both;
-}
-
-.search-container {
-    background: rgba(40, 40, 40, 0.7);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: var(--shadow-strong);
-    backdrop-filter: blur(20px);
-    animation: fadeInUp 1s ease-out 0.4s both;
-}
-
+/* Onglets de recherche */
 .search-tabs {
     display: flex;
-    margin-bottom: 1.5rem;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: var(--radius-md);
-    padding: 0.3rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin: 20px 20px 24px;
+    gap: 4px;
 }
 
 .search-tab {
@@ -340,215 +132,278 @@ body, html {
     background: transparent;
     border: none;
     color: var(--text-secondary);
-    padding: 0.8rem;
-    cursor: pointer;
-    border-radius: calc(var(--radius-md) - 4px);
-    transition: var(--transition-smooth);
+    padding: 12px 8px;
+    border-radius: calc(var(--radius) - 4px);
     font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    text-align: center;
 }
 
 .search-tab.active {
-    background: rgba(52, 152, 219, 0.2);
-    color: var(--accent-primary);
+    background: var(--accent-blue);
+    color: white;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
 }
 
-.search-tab:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.05);
+.search-tab:not(.active):hover {
+    background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
 }
 
-.search-box {
-    transition: var(--transition-smooth);
+/* Contenu des onglets */
+.tab-content {
+    display: none;
+    padding: 0 20px;
 }
 
-.hidden {
-    display: none !important;
+.tab-content.active {
+    display: block;
 }
 
-.input-group {
+/* Section de recherche */
+.search-section {
+    margin-bottom: 24px;
+}
+
+.search-form {
     display: flex;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    padding: 0.3rem;
-}
-
-.input-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 1rem;
-    color: var(--accent-primary);
-    font-size: 1.2rem;
+    gap: 8px;
+    margin-bottom: 16px;
 }
 
 .search-input {
     flex: 1;
-    background: transparent;
-    border: none;
+    background: var(--bg-input);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 16px;
     color: var(--text-primary);
-    padding: 1rem 0.5rem;
-    font-size: 1.1rem;
+    font-size: 16px;
+    font-family: var(--font);
+    transition: var(--transition);
+}
+
+.search-input:focus {
     outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 .search-input::placeholder {
     color: var(--text-muted);
 }
 
-.btn-primary {
-    background: rgba(15, 15, 15, 0.95) !important;
-    border: 2px solid #3498DB !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    padding: 14px 28px !important;
-    border-radius: 50px !important;
-    font-size: 0.95rem !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    letter-spacing: 0.3px !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    min-height: 48px !important;
-    backdrop-filter: blur(10px) !important;
-    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15) !important;
+.search-btn {
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    padding: 16px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    font-size: 14px;
 }
 
-.btn-primary:hover {
-    background: rgba(25, 25, 25, 0.98) !important;
-    border-color: #5DADE2 !important;
-    color: #ffffff !important;
-    transform: translateY(-3px) scale(1.02) !important;
-    box-shadow: 0 8px 32px rgba(52, 152, 219, 0.25) !important;
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(52, 152, 219, 0.4);
 }
 
-.btn-outline {
-    background: transparent !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    padding: 14px 28px !important;
-    border-radius: 50px !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    backdrop-filter: blur(10px) !important;
-    min-height: 48px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
+/* Scanner */
+.scanner-section {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-dark);
 }
 
-.btn-outline:hover {
-    background: rgba(15, 15, 15, 0.95) !important;
-    border-color: #3498DB !important;
-    color: #ffffff !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15) !important;
-}
-
-.camera-preview {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: var(--radius-md);
-    height: 220px;
+.scanner-controls {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
-    border: 1px dashed rgba(255, 255, 255, 0.1);
-    position: relative;
-    overflow: hidden;
+    gap: 8px;
+    margin-bottom: 16px;
 }
 
-#camera-preview, #captured-image {
+.scanner-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    color: var(--text-primary);
+    padding: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 14px;
+}
+
+.scanner-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.scanner-btn.active {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+#camera-preview, #captured-image, #photo-preview {
     width: 100%;
-    height: 100%;
+    max-height: 200px;
+    border-radius: 12px;
     object-fit: cover;
-    border-radius: var(--radius-md);
 }
 
-#camera-placeholder {
+#camera-placeholder, #photo-placeholder {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed var(--border-dark);
+    border-radius: 12px;
+    padding: 40px 20px;
     text-align: center;
     color: var(--text-muted);
+    font-size: 14px;
 }
 
-#camera-placeholder i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-}
-
-.camera-controls {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-}
-
-/* Autocomplétion pour la recherche par nom */
-.name-autocomplete {
-    position: absolute;
-    top: calc(100% - 1.5rem);
-    left: 2rem;
-    right: 2rem;
-    background: rgba(30, 30, 30, 0.95);
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-top: none;
-    max-height: 300px;
+/* Autocomplétion */
+.autocomplete-results {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    margin-top: 8px;
+    max-height: 200px;
     overflow-y: auto;
-    z-index: 1000;
-    box-shadow: var(--shadow-strong);
-    display: none;
+    position: relative;
+    z-index: 50;
 }
 
 .autocomplete-item {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
     cursor: pointer;
-    transition: var(--transition-smooth);
-}
-
-.autocomplete-item:hover {
-    background: rgba(52, 152, 219, 0.1);
+    border-bottom: 1px solid var(--border-dark);
+    transition: var(--transition);
 }
 
 .autocomplete-item:last-child {
     border-bottom: none;
 }
 
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 3rem;
-    }
-    
-    .search-tabs {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .search-tab {
-        border-radius: var(--radius-sm);
-    }
-    
-    .camera-controls {
-        flex-direction: column;
-    }
-    
-    .btn-primary, .btn-outline {
-        width: 100%;
-        justify-content: center;
-    }
+.autocomplete-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Résultats */
+.results-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid var(--accent-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--accent-orange);
+}
+
+.product-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    transition: var(--transition);
+}
+
+.product-card:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+}
+
+.product-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.product-info {
+    flex: 1;
+}
+
+.product-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 16px;
+    line-height: 1.3;
+}
+
+.product-price {
+    color: var(--accent-green);
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.product-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-dark);
+}
+
+.product-detail {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.product-detail strong {
+    color: var(--text-primary);
 }
 
 /* Animations */
-@keyframes fadeInUp {
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -556,316 +411,598 @@ body, html {
     }
 }
 
-@keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-    100% {
-        transform: translateY(0px);
-    }
-}
-
-.background-graphics {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.food-icon {
-    position: absolute;
-    font-size: 2rem;
-    opacity: 0.2;
-    animation: float 6s ease-in-out infinite;
-}
-
-.fruit {
-    color: #FF5722;
-    animation-delay: 0s;
-}
-
-.vegetable {
-    color: #4CAF50;
-    animation-delay: 1s;
-}
-
-.grain {
-    color: #FFC107;
-    animation-delay: 2s;
-}
-
-.protein {
-    color: #9C27B0;
-    animation-delay: 3s;
-}
-
-.dairy {
-    color: #2196F3;
-    animation-delay: 4s;
-}
-
-.price-bubble {
-    position: absolute;
+/* Bouton flotant retour */
+.floating-back {
+    position: fixed;
+    bottom: 120px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: var(--gradient-primary);
+    border: none;
     border-radius: 50%;
-    background: rgba(52, 152, 219, 0.2);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    border: 1px solid rgba(52, 152, 219, 0.4);
-    animation: float 8s ease-in-out infinite;
+    text-decoration: none;
 }
 
-.price-bubble.small {
-    width: 60px;
-    height: 60px;
-    font-size: 0.9rem;
-    animation-delay: 1s;
+.floating-back:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(52, 152, 219, 0.4);
 }
 
-.price-bubble.medium {
-    width: 80px;
-    height: 80px;
-    font-size: 1.1rem;
-    animation-delay: 2s;
-}
-
-.price-bubble.large {
-    width: 100px;
-    height: 100px;
-    font-size: 1.3rem;
-    animation-delay: 3s;
-}
-
-.price-bubble span {
-    color: var(--accent-primary);
-}
-</style>
-
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Changer d'onglet de recherche
-    const searchTabs = document.querySelectorAll('.search-tab');
-    const searchBoxes = document.querySelectorAll('.search-box');
+/* Responsive */
+@media (max-width: 375px) {
+    .mobile-container {
+        max-width: 100%;
+    }
     
-    searchTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
+    .mobile-header {
+        padding: 20px 16px 16px;
+    }
+    
+    .search-tabs {
+        margin: 16px 16px 20px;
+    }
+    
+    .tab-content {
+        padding: 0 16px;
+    }
+    
+    .search-input {
+        padding: 14px;
+        font-size: 16px;
+    }
+    
+    .search-btn {
+        padding: 14px 16px;
+    }
+}
+    </style>
+</head>
+
+<body>
+    <div class="mobile-container">
+        <!-- Header Mobile -->
+        <div class="mobile-header">
+            <div class="header-top">
+                <div class="logo">ZYMA</div>
+                <div class="header-actions">
+                    <a href="{{ url('/') }}" class="back-btn">←</a>
+                </div>
+            </div>
+            <div class="search-title">Recherche Avancée</div>
+        </div>
+
+        <!-- Onglets de recherche -->
+        <div class="search-tabs">
+            <button class="search-tab active" data-tab="barcode">📊 Code-barres</button>
+            <button class="search-tab" data-tab="name">🛍️ Nom</button>
+            <button class="search-tab" data-tab="photo">📸 Photo</button>
+        </div>
+
+        <!-- Contenu Code-barres -->
+        <div class="tab-content active" id="barcode-content">
+            <div class="search-section">
+                <form class="search-form" id="barcode-form">
+                    @csrf
+                    <input type="text" 
+                           name="barcode" 
+                           id="barcode-input"
+                           class="search-input" 
+                           placeholder="Scannez ou entrez un code-barres..." 
+                           value="3017620422003">
+                    <button type="submit" class="search-btn">Rechercher</button>
+                </form>
+            </div>
+
+            <div class="scanner-section">
+                <div class="scanner-controls">
+                    <button type="button" class="scanner-btn" id="start-camera">📷 Scanner</button>
+                    <button type="button" class="scanner-btn" id="stop-camera">⏹️ Arrêter</button>
+                </div>
+                <div id="camera-placeholder">
+                    Cliquez sur "Scanner" pour démarrer la caméra
+                </div>
+                <video id="camera-preview" style="display: none;"></video>
+                <img id="captured-image" style="display: none;">
+            </div>
+        </div>
+
+        <!-- Contenu Nom du produit -->
+        <div class="tab-content" id="name-content">
+            <div class="search-section">
+                <form class="search-form" id="name-form">
+                    @csrf
+                    <input type="text" 
+                           name="name" 
+                           id="name-input"
+                           class="search-input" 
+                           placeholder="Nom du produit..." 
+                           autocomplete="off">
+                    <button type="submit" class="search-btn">Rechercher</button>
+                </form>
+                <div id="autocomplete-results" class="autocomplete-results" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Contenu Photo -->
+        <div class="tab-content" id="photo-content">
+            <div class="search-section">
+                <div class="scanner-section">
+                    <div class="scanner-controls">
+                        <button type="button" class="scanner-btn" id="take-photo">📸 Prendre photo</button>
+                        <input type="file" id="upload-photo" accept="image/*" style="display: none;">
+                        <button type="button" class="scanner-btn" id="upload-btn">📁 Charger</button>
+                    </div>
+                    <div id="photo-placeholder">
+                        Prenez une photo ou chargez une image du produit
+                    </div>
+                    <img id="photo-preview" style="display: none;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section des résultats -->
+        <div class="results-section" id="results-container" style="display: none;">
+            <div id="results-content"></div>
+        </div>
+
+        <!-- Bouton flotant retour -->
+        <a href="{{ url('/') }}" class="floating-back">🏠</a>
+    </div>
+
+<script>
+// Variables globales
+let html5QrCode = null;
+let isScanning = false;
+let autocompleteTimeout = null;
+
+// CSRF Token
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+// Gestion des onglets
+document.querySelectorAll('.search-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
             // Désactiver tous les onglets
-            searchTabs.forEach(t => t.classList.remove('active'));
-            // Cacher toutes les boîtes de recherche
-            searchBoxes.forEach(box => box.classList.add('hidden'));
-            
-            // Activer l'onglet cliqué
-            this.classList.add('active');
-            // Afficher la boîte de recherche correspondante
-            const tabName = this.getAttribute('data-tab');
-            document.getElementById(tabName + '-search').classList.remove('hidden');
+        document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Activer l'onglet sélectionné
+        tab.classList.add('active');
+        const tabName = tab.getAttribute('data-tab');
+        document.getElementById(tabName + '-content').classList.add('active');
+        
+        // Arrêter le scanner si on change d'onglet
+        stopScanner();
         });
     });
     
-    // Fonctionnalités de la caméra
-    const startCameraBtn = document.getElementById('start-camera');
-    const capturePhotoBtn = document.getElementById('capture-photo');
-    const retakePhotoBtn = document.getElementById('retake-photo');
-    const uploadPhotoBtn = document.getElementById('upload-photo');
-    const cameraPreview = document.getElementById('camera-preview');
-    const cameraPlaceholder = document.getElementById('camera-placeholder');
-    const photoCanvas = document.getElementById('photo-canvas');
-    const capturedImage = document.getElementById('captured-image');
-    
-    if (startCameraBtn) {
-        startCameraBtn.addEventListener('click', function() {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                    .then(function(stream) {
-                        cameraPreview.srcObject = stream;
-                        cameraPreview.classList.remove('hidden');
-                        cameraPlaceholder.classList.add('hidden');
-                        startCameraBtn.classList.add('hidden');
-                        capturePhotoBtn.classList.remove('hidden');
-                    })
-                    .catch(function(error) {
-                        alert('Impossible d\'accéder à la caméra: ' + error.message);
-                    });
-            } else {
-                alert('Votre navigateur ne supporte pas l\'accès à la caméra');
-            }
-        });
-    }
-    
-    if (capturePhotoBtn) {
-        capturePhotoBtn.addEventListener('click', function() {
-            photoCanvas.width = cameraPreview.videoWidth;
-            photoCanvas.height = cameraPreview.videoHeight;
-            photoCanvas.getContext('2d').drawImage(cameraPreview, 0, 0, photoCanvas.width, photoCanvas.height);
-            
-            capturedImage.src = photoCanvas.toDataURL('image/png');
-            capturedImage.classList.remove('hidden');
-            cameraPreview.classList.add('hidden');
-            
-            capturePhotoBtn.classList.add('hidden');
-            retakePhotoBtn.classList.remove('hidden');
-            uploadPhotoBtn.classList.remove('hidden');
-            
-            // Arrêter la caméra
-            cameraPreview.srcObject.getTracks().forEach(track => track.stop());
-        });
-    }
-    
-    if (retakePhotoBtn) {
-        retakePhotoBtn.addEventListener('click', function() {
-            capturedImage.classList.add('hidden');
-            retakePhotoBtn.classList.add('hidden');
-            uploadPhotoBtn.classList.add('hidden');
-            startCameraBtn.classList.remove('hidden');
-        });
-    }
-    
-    if (uploadPhotoBtn) {
-        uploadPhotoBtn.addEventListener('click', function() {
-            alert('Analyse en cours... Cette fonctionnalité est en développement.');
-        });
-    }
-    
-    // Autocomplétion pour la recherche par nom
-    const productNameInput = document.getElementById('productNameInput');
-    const nameAutocomplete = document.getElementById('nameAutocomplete');
-    
-    if (productNameInput && nameAutocomplete) {
-        productNameInput.addEventListener('input', function() {
-            const query = this.value.trim();
-            
-            if (query.length >= 2) {
-                // Requête AJAX pour récupérer les suggestions
-                fetch(`/api/products/search?query=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        nameAutocomplete.innerHTML = '';
-                        
-                        if (data.length > 0) {
-                            data.forEach(product => {
-                                const item = document.createElement('div');
-                                item.className = 'autocomplete-item';
-                                item.textContent = product.name;
-                                
-                                item.addEventListener('click', function() {
-                                    productNameInput.value = product.name;
-                                    nameAutocomplete.style.display = 'none';
-                                    document.querySelector('#name-search form').submit();
-                                });
-                                
-                                nameAutocomplete.appendChild(item);
-                            });
-                            
-                            nameAutocomplete.style.display = 'block';
-                        } else {
-                            nameAutocomplete.style.display = 'none';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la recherche :', error);
-                    });
-            } else {
-                nameAutocomplete.style.display = 'none';
-            }
-        });
-        
-        productNameInput.addEventListener('focus', function() {
-            if (this.value.length >= 2) {
-                nameAutocomplete.style.display = 'block';
-            }
-        });
-        
-        document.addEventListener('click', function(event) {
-            if (!productNameInput.contains(event.target) && !nameAutocomplete.contains(event.target)) {
-                nameAutocomplete.style.display = 'none';
-            }
-        });
-    }
-
-    const startBarcodeScannerBtn = document.getElementById('start-barcode-scanner');
-    const barcodeScannerDiv = document.getElementById('barcode-scanner');
-    let html5QrCode;
-    if (startBarcodeScannerBtn) {
-        startBarcodeScannerBtn.addEventListener('click', function() {
-            startBarcodeScannerBtn.style.display = 'none';
-            barcodeScannerDiv.style.display = 'block';
-            if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode('barcode-scanner');
-            }
-            Html5Qrcode.getCameras().then(cameras => {
-                const cameraId = cameras && cameras.length ? cameras[0].id : null;
-                html5QrCode.start(
-                    cameraId,
-                    { fps: 10, qrbox: 250 },
-                    (decodedText, decodedResult) => {
-                        console.log('Code détecté:', decodedText);
-                        
-                        // Valider que c'est bien un code-barres numérique (8, 12, 13 ou 14 chiffres)
-                        const cleanCode = decodedText.trim();
-                        const isValidBarcode = /^\d{8,14}$/.test(cleanCode);
-                        
-                        if (!isValidBarcode) {
-                            console.log('Code invalide:', cleanCode);
-                            // Ne pas arrêter le scanner, continuer à chercher
-                            return;
-                        }
-                        
-                        // Arrêter le scanner seulement si on a un code valide
-                        html5QrCode.stop();
-                        console.log('Code-barres valide détecté:', cleanCode);
-                        
-                        // Vérifier le token CSRF
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]');
-                        if (!csrfToken) {
-                            console.error('Token CSRF non trouvé');
-                            return;
-                        }
-                        
-                        console.log('Token CSRF trouvé');
-                        
-                        // Créer un formulaire et le soumettre vers /fetch
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = '/fetch';
-                        form.style.display = 'none';
-                        
-                        // Ajouter le token CSRF
-                        const csrfInput = document.createElement('input');
-                        csrfInput.type = 'hidden';
-                        csrfInput.name = '_token';
-                        csrfInput.value = csrfToken.getAttribute('content');
-                        form.appendChild(csrfInput);
-                        
-                        // Ajouter le code produit
-                        const productCodeInput = document.createElement('input');
-                        productCodeInput.type = 'hidden';
-                        productCodeInput.name = 'product_code';
-                        productCodeInput.value = cleanCode;
-                        form.appendChild(productCodeInput);
-                        
-                        console.log('Soumission du formulaire avec code:', cleanCode);
-                        
-                        // Ajouter au DOM et soumettre
-                        document.body.appendChild(form);
-                        form.submit();
-                    },
-                    (errorMessage) => {
-                        // Ignorer les erreurs de scan
-                    }
-                ).catch(err => {
-                    alert('Erreur lors de l\'accès à la caméra : ' + err);
-                });
-            });
-        });
+// Recherche par code-barres
+document.getElementById('barcode-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const barcode = document.getElementById('barcode-input').value.trim();
+    if (barcode) {
+        await searchProduct('barcode', barcode);
     }
 });
+
+// Recherche par nom
+document.getElementById('name-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const name = document.getElementById('name-input').value.trim();
+    if (name) {
+        await searchProduct('name', name);
+    }
+});
+
+// Autocomplétion
+document.getElementById('name-input').addEventListener('input', function() {
+    const query = this.value.trim();
+    
+    clearTimeout(autocompleteTimeout);
+    
+    if (query.length >= 2) {
+        autocompleteTimeout = setTimeout(() => {
+            fetchAutocomplete(query);
+        }, 300);
+            } else {
+        hideAutocomplete();
+    }
+});
+
+// Scanner de code-barres
+document.getElementById('start-camera').addEventListener('click', startScanner);
+document.getElementById('stop-camera').addEventListener('click', stopScanner);
+
+// Photo
+document.getElementById('upload-btn').addEventListener('click', () => {
+    document.getElementById('upload-photo').click();
+});
+
+document.getElementById('upload-photo').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('photo-preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            document.getElementById('photo-placeholder').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Fonction de recherche principale
+async function searchProduct(type, query) {
+    showLoading();
+    
+    try {
+        let response;
+        
+        if (type === 'barcode') {
+            // Recherche par code-barres via POST /fetch
+            const formData = new FormData();
+            formData.append('_token', csrfToken);
+            formData.append('product_code', query);
+            
+            response = await fetch('/fetch', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+        } else if (type === 'name') {
+            // Recherche par nom via GET /products/search
+            response = await fetch(`/products/search?name=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+        }
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const html = await response.text();
+        displayResults(html);
+        
+    } catch (error) {
+        console.error('Erreur de recherche:', error);
+        showError('Erreur lors de la recherche. Veuillez réessayer.');
+    }
+}
+
+// Autocomplétion
+async function fetchAutocomplete(query) {
+    try {
+        const response = await fetch(`/api/products/search?query=${encodeURIComponent(query)}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            showAutocomplete(data.suggestions || []);
+        } else {
+            hideAutocomplete();
+        }
+    } catch (error) {
+        console.error('Erreur autocomplétion:', error);
+        hideAutocomplete();
+    }
+}
+
+// Affichage autocomplétion
+function showAutocomplete(suggestions) {
+    const container = document.getElementById('autocomplete-results');
+    
+    if (suggestions.length === 0) {
+        hideAutocomplete();
+        return;
+    }
+    
+    container.innerHTML = suggestions.map(suggestion => 
+        `<div class="autocomplete-item" onclick="selectAutocomplete('${suggestion}')">${suggestion}</div>`
+    ).join('');
+    
+    container.style.display = 'block';
+}
+
+function hideAutocomplete() {
+    document.getElementById('autocomplete-results').style.display = 'none';
+}
+
+function selectAutocomplete(value) {
+    document.getElementById('name-input').value = value;
+    hideAutocomplete();
+    searchProduct('name', value);
+}
+
+// Scanner
+async function startScanner() {
+    if (isScanning) return;
+    
+    try {
+        html5QrCode = new Html5Qrcode("camera-preview");
+        
+        const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 }
+        };
+        
+        await html5QrCode.start(
+            { facingMode: "environment" },
+            config,
+            (decodedText) => {
+                document.getElementById('barcode-input').value = decodedText;
+                stopScanner();
+                searchProduct('barcode', decodedText);
+            },
+            (errorMessage) => {
+                // Erreur silencieuse
+            }
+        );
+        
+        isScanning = true;
+        document.getElementById('camera-placeholder').style.display = 'none';
+        document.getElementById('camera-preview').style.display = 'block';
+        document.getElementById('start-camera').classList.add('active');
+        
+    } catch (error) {
+        console.error('Erreur scanner:', error);
+        showError('Impossible d\'accéder à la caméra');
+    }
+}
+
+async function stopScanner() {
+    if (html5QrCode && isScanning) {
+        try {
+            await html5QrCode.stop();
+            html5QrCode = null;
+            isScanning = false;
+            
+            document.getElementById('camera-preview').style.display = 'none';
+            document.getElementById('camera-placeholder').style.display = 'block';
+            document.getElementById('start-camera').classList.remove('active');
+        } catch (error) {
+            console.error('Erreur arrêt scanner:', error);
+        }
+    }
+}
+
+// Affichage des résultats
+function showLoading() {
+    const container = document.getElementById('results-container');
+    container.innerHTML = `
+        <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <div>Recherche en cours...</div>
+        </div>
+    `;
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth' });
+}
+
+function showError(message) {
+    const container = document.getElementById('results-container');
+    container.innerHTML = `
+        <div class="error-state">
+            <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+            <div>${message}</div>
+        </div>
+    `;
+    container.style.display = 'block';
+}
+
+function displayResults(html) {
+    const container = document.getElementById('results-container');
+    
+    // Parser le HTML reçu
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Extraire les informations produit
+    const productInfo = extractProductInfo(doc);
+    
+    if (productInfo) {
+        container.innerHTML = formatProductCard(productInfo);
+            } else {
+        container.innerHTML = `
+            <div class="error-state">
+                <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                <div>Aucun produit trouvé</div>
+            </div>
+        `;
+    }
+    
+    container.style.display = 'block';
+    container.classList.add('fade-in');
+    container.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Extraction des données produit
+function extractProductInfo(doc) {
+    try {
+        // Vérifier si c'est une vue de produit valide
+        const productNameEl = doc.querySelector('h1');
+        if (!productNameEl) {
+            return null;
+        }
+        
+        const productName = productNameEl.textContent.trim();
+        if (!productName || productName === 'Produit introuvable') {
+            return null;
+        }
+        
+        // Extraire l'image du produit
+        const productImage = doc.querySelector('.product-image img')?.src;
+        
+        // Extraire les statistiques de prix
+        let minPrice = null;
+        let maxPrice = null;
+        let avgPrice = null;
+        
+        // Chercher les prix dans les statistiques
+        const priceStatItems = doc.querySelectorAll('.price-stat-item');
+        priceStatItems.forEach(item => {
+            const header = item.querySelector('h4')?.textContent?.trim();
+            const priceText = item.querySelector('h3')?.textContent?.trim();
+            
+            if (header === 'Prix Min' && priceText) {
+                minPrice = priceText;
+            } else if (header === 'Prix Max' && priceText) {
+                maxPrice = priceText;
+            } else if (header === 'Prix Moyen' && priceText) {
+                avgPrice = priceText;
+            }
+        });
+        
+        // Si pas trouvé dans les stats, chercher le prix principal
+        if (!minPrice) {
+            const mainPriceEl = doc.querySelector('.display-4.fw-bold');
+            if (mainPriceEl) {
+                minPrice = mainPriceEl.textContent.trim();
+            }
+        }
+        
+        // Extraire l'économie possible
+        let economyText = null;
+        const economyEl = doc.querySelector('.text-secondary .text-success');
+        if (economyEl) {
+            economyText = `Économie possible : ${economyEl.textContent.trim()}`;
+        }
+        
+        // Extraire les magasins depuis les cartes
+        const stores = [];
+        const storeCards = doc.querySelectorAll('.card');
+        
+        storeCards.forEach(card => {
+            // Nom du magasin
+            const storeNameEl = card.querySelector('h4');
+            if (!storeNameEl) return;
+            
+            const storeName = storeNameEl.textContent.trim();
+            
+            // Prix du magasin - chercher le h3 avec fw-bold dans la partie prix
+            const priceSection = card.querySelector('.col-md-5');
+            const storePriceEl = priceSection?.querySelector('h3.fw-bold');
+            if (!storePriceEl) return;
+            
+            const storePrice = storePriceEl.textContent.trim();
+            
+            // Adresse du magasin
+            const addressEl = card.querySelector('.text-secondary.small');
+            const address = addressEl ? addressEl.textContent.trim() : '';
+            
+            // Lien Google Maps
+            const mapsLinkEl = card.querySelector('a[href*="maps"]');
+            const mapsUrl = mapsLinkEl ? mapsLinkEl.href : null;
+            
+            // Vérifier si c'est le meilleur prix
+            const isBestPrice = card.querySelector('.badge.bg-success') !== null;
+            
+            stores.push({
+                name: storeName,
+                price: storePrice,
+                address: address,
+                mapsUrl: mapsUrl,
+                isBestPrice: isBestPrice
+            });
+        });
+        
+        return {
+            name: productName,
+            image: productImage,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+            avgPrice: avgPrice,
+            economy: economyText,
+            stores: stores.slice(0, 6) // Limiter à 6 magasins pour mobile
+        };
+        
+    } catch (error) {
+        console.error('Erreur extraction:', error);
+        return null;
+    }
+}
+
+// Format de la carte produit
+function formatProductCard(product) {
+    let statsHtml = '';
+    if (product.minPrice || product.avgPrice || product.maxPrice) {
+        statsHtml = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 16px 0; padding: 16px; background: rgba(255, 255, 255, 0.05); border-radius: 12px;">
+                ${product.minPrice ? `<div style="text-align: center;"><div style="color: var(--accent-green); font-size: 12px; margin-bottom: 4px;">Prix Min</div><div style="font-weight: 700; color: var(--accent-green);">${product.minPrice}</div></div>` : ''}
+                ${product.avgPrice ? `<div style="text-align: center;"><div style="color: var(--text-secondary); font-size: 12px; margin-bottom: 4px;">Moyenne</div><div style="font-weight: 600;">${product.avgPrice}</div></div>` : ''}
+                ${product.maxPrice ? `<div style="text-align: center;"><div style="color: var(--accent-orange); font-size: 12px; margin-bottom: 4px;">Prix Max</div><div style="font-weight: 600; color: var(--accent-orange);">${product.maxPrice}</div></div>` : ''}
+            </div>
+        `;
+    }
+    
+    const storesHtml = product.stores.map(store => `
+        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 12px; margin-bottom: 8px; ${store.isBestPrice ? 'border: 1px solid var(--accent-green);' : ''}">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">
+                        ${store.name}
+                        ${store.isBestPrice ? ' <span style="background: var(--accent-green); color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px;">MEILLEUR</span>' : ''}
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.3;">
+                        ${store.address}
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 700; font-size: 16px; color: ${store.isBestPrice ? 'var(--accent-green)' : 'var(--text-primary)'};">
+                        ${store.price}
+                    </div>
+                </div>
+            </div>
+            ${store.mapsUrl ? `
+                <a href="${store.mapsUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, 0.1); color: var(--text-primary); text-decoration: none; font-size: 12px; padding: 6px 10px; border-radius: 6px; transition: var(--transition);">
+                    🗺️ Voir sur la carte
+                </a>
+            ` : ''}
+        </div>
+    `).join('');
+    
+    return `
+        <div class="product-card">
+            <div class="product-header">
+                ${product.image ? `<img src="${product.image}" alt="${product.name}" class="product-image">` : '<div class="product-image" style="background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 24px;">📦</div>'}
+                <div class="product-info">
+                    <div class="product-name">${product.name}</div>
+                    ${product.minPrice ? `<div class="product-price">${product.minPrice}</div>` : ''}
+                    ${product.economy ? `<div style="color: var(--accent-green); font-size: 14px; margin-top: 4px;">${product.economy}</div>` : ''}
+                </div>
+            </div>
+            
+            ${statsHtml}
+            
+            ${storesHtml ? `
+                <div style="margin-top: 16px;">
+                    <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 12px; font-size: 16px;">🏪 Magasins (${product.stores.length})</div>
+                    ${storesHtml}
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+// Nettoyage à la fermeture
+window.addEventListener('beforeunload', () => {
+    stopScanner();
+});
 </script>
+
+</body>
+</html>
 @endsection
