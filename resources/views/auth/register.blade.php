@@ -281,7 +281,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+<div class="container">
         <!-- Logo Section -->
         <div class="logo-section">
             <div class="logo">🍎</div>
@@ -291,21 +291,21 @@
         <!-- Register Form -->
         <div class="register-form">
             <h2 class="form-title">Créer un compte</h2>
-            
-            <form method="POST" action="{{ route('register') }}" id="registerForm">
-                @csrf
 
+            <form method="POST" action="{{ route('register') }}" id="registerForm">
+                        @csrf
+                        
                 <div class="form-group">
                     <label class="form-label" for="name">Nom complet</label>
                     <input id="name" type="text" class="form-input @error('name') error @enderror" 
                            name="name" value="{{ old('name') }}" required autocomplete="name" autofocus
                            placeholder="Votre nom complet">
-                    @error('name')
+                            @error('name')
                         <div class="error-message">
                             ⚠️ {{ $message }}
                         </div>
-                    @enderror
-                </div>
+                            @enderror
+                        </div>
 
                 <div class="form-group">
                     <label class="form-label" for="email">Adresse email</label>
@@ -317,7 +317,7 @@
                             ⚠️ {{ $message }}
                         </div>
                     @enderror
-                </div>
+                        </div>
 
                 <div class="form-group">
                     <label class="form-label" for="password">Mot de passe</label>
@@ -329,14 +329,14 @@
                             <div class="strength-fill" id="strengthFill"></div>
                         </div>
                         <div class="strength-text" id="strengthText">Faible</div>
-                    </div>
+                        </div>
                     @error('password')
                         <div class="error-message">
                             ⚠️ {{ $message }}
                         </div>
                     @enderror
                 </div>
-
+                
                 <div class="form-group">
                     <label class="form-label" for="password_confirmation">Confirmer le mot de passe</label>
                     <input id="password_confirmation" type="password" class="form-input" 
@@ -350,7 +350,7 @@
                         J'accepte les <a href="#">conditions d'utilisation</a> et la <a href="#">politique de confidentialité</a> de ZYMA
                     </div>
                 </div>
-
+                
                 <button type="submit" class="register-btn" id="registerBtn">
                     <span class="btn-text">Créer mon compte</span>
                     <div class="loading">
@@ -359,16 +359,16 @@
                     </div>
                 </button>
             </form>
-        </div>
+                </div>
 
         <!-- Login Section -->
         <div class="login-section">
             <p class="login-text">Vous avez déjà un compte ?</p>
             <a href="{{ route('login') }}" class="login-btn">Se connecter</a>
-        </div>
     </div>
+</div>
 
-    <script>
+<script>
         // Animation des champs de formulaire
         document.querySelectorAll('.form-input').forEach(input => {
             input.addEventListener('focus', function() {
@@ -379,13 +379,13 @@
                 this.style.transform = 'scale(1)';
             });
         });
-
+        
         // Password strength meter
         const passwordInput = document.getElementById('password');
         const strengthContainer = document.getElementById('passwordStrength');
         const strengthFill = document.getElementById('strengthFill');
         const strengthText = document.getElementById('strengthText');
-
+        
         passwordInput.addEventListener('input', function() {
             const value = this.value;
             
@@ -424,7 +424,7 @@
                 strengthContainer.style.display = 'none';
             }
         });
-
+        
         // Gestion du formulaire d'inscription
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             const registerBtn = document.getElementById('registerBtn');
@@ -446,7 +446,7 @@
         document.querySelector('.register-btn').addEventListener('click', function() {
             if (!this.disabled) {
                 this.style.transform = 'scale(0.98)';
-                setTimeout(() => {
+            setTimeout(() => {
                     this.style.transform = 'scale(1)';
                 }, 150);
             }
@@ -464,8 +464,8 @@
                     element.style.opacity = '1';
                     element.style.transform = 'translateY(0)';
                 }, index * 150);
-            });
         });
-    </script>
+    });
+</script>
 </body>
 </html>

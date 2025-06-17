@@ -556,8 +556,8 @@
             <a href="{{ route('social.feed') }}" class="header-btn">✕</a>
             <button class="header-btn" id="flashBtn">⚡</button>
             <button class="header-btn" id="switchCameraBtn">🔄</button>
-        </div>
-
+    </div>
+    
         <!-- Camera mode indicator -->
         <div class="camera-mode" id="cameraMode" style="display: none;">📸 Photo</div>
 
@@ -574,7 +574,7 @@
                 <div class="preview-icon">📸</div>
                 <div class="preview-text">Prêt à capturer ?</div>
                 <div class="preview-subtitle">Choisissez caméra ou galerie ci-dessous</div>
-            </div>
+                                </div>
             
             <!-- Image preview after capture/upload -->
             <img id="imagePreview" class="image-preview" alt="Aperçu">
@@ -585,8 +585,8 @@
                 <div class="permission-title">Accès à la caméra</div>
                 <div class="permission-text">ZYMA a besoin d'accéder à votre caméra pour prendre des photos de vos repas</div>
                 <button class="permission-btn" id="requestCameraBtn">Autoriser la caméra</button>
-            </div>
-        </div>
+                                </div>
+                            </div>
 
         <!-- Camera controls -->
         <div class="camera-controls">
@@ -594,8 +594,8 @@
             <div class="mode-switcher">
                 <button class="mode-btn active" id="cameraModeBtn">📸 Caméra</button>
                 <button class="mode-btn" id="galleryModeBtn">🖼️ Galerie</button>
-            </div>
-
+                        </div>
+                        
             <!-- Capture section with side controls -->
             <div class="capture-section">
                 <div class="side-controls">
@@ -604,12 +604,12 @@
                     <div class="capture-btn" id="captureBtn">
                         <input type="file" id="imageInput" accept="image/*" style="display: none;">
                         <div class="capture-icon" id="captureIcon">📷</div>
-                    </div>
+                                </div>
                     
                     <div class="control-btn" id="gridBtn">⊞</div>
-                </div>
-            </div>
-
+                            </div>
+                        </div>
+                        
             <!-- Quick actions -->
             <div class="quick-actions">
                 <button class="quick-btn" id="retakeBtn" style="display: none;">
@@ -620,9 +620,9 @@
                     <span>✓</span>
                     <span>Utiliser cette photo</span>
                 </button>
-            </div>
-        </div>
-
+                            </div>
+                        </div>
+                        
         <!-- Flash effect overlay -->
         <div class="flash-overlay" id="flashOverlay"></div>
 
@@ -649,9 +649,9 @@
                             <input type="radio" name="post_type" value="review">
                             <div class="post-type-icon">⭐</div>
                             <div class="post-type-label">Avis</div>
-                        </label>
-                    </div>
-                </div>
+                                </label>
+                            </div>
+                            </div>
 
                 <!-- Meal name -->
                 <div class="form-group">
@@ -662,8 +662,8 @@
                            name="product_name" 
                            placeholder="Ex: Salade César, Burger maison..."
                            required>
-                </div>
-
+                        </div>
+                        
                 <!-- Location/Restaurant -->
                 <div class="form-group">
                     <label for="store_name" class="form-label">Lieu</label>
@@ -673,8 +673,8 @@
                            name="store_name" 
                            placeholder="Ex: Maison, Restaurant XY, Cantine..."
                            required>
-                </div>
-
+                        </div>
+                        
                 <!-- Price -->
                 <div class="form-group">
                     <label for="price" class="form-label">Prix (€)</label>
@@ -703,11 +703,11 @@
                     <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
                 </button>
             </form>
-        </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
             // DOM elements
             const cameraVideo = document.getElementById('cameraVideo');
             const captureCanvas = document.getElementById('captureCanvas');
@@ -981,8 +981,8 @@
                 // Handle image differently based on source
                 if (currentMode === 'camera' && capturedImageBlob instanceof Blob) {
                     // For camera-captured images, convert to base64
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
                         formData.append('captured_image', e.target.result);
                         submitForm(formData);
                     };
@@ -1051,7 +1051,7 @@
             window.addEventListener('beforeunload', function() {
                 stopCamera();
             });
-        });
-    </script>
+    });
+</script>
 </body>
 </html> 

@@ -1,8 +1,13 @@
-[phases.build]
-cmds = ["echo 'Build minimal'"]
-
-[phases.start]
-cmd = "cd public && php -S 0.0.0.0:$PORT index.php"
-
 [variables]
-PHP_VERSION = "8.2" 
+APP_ENV = "production"
+APP_DEBUG = "false"
+LOG_CHANNEL = "errorlog"
+
+[phases.setup]
+nixPkgs = ["php", "php81Packages.composer"]
+
+[phases.install]
+cmds = ["composer install --no-dev --optimize-autoloader"]
+
+[start]
+cmd = "php -S 0.0.0.0:$PORT -t public/" 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier le profil - ZYMA</title>
-    <style>
+<style>
         * {
             margin: 0;
             padding: 0;
@@ -16,7 +16,7 @@
             background: #000000;
             color: #ffffff;
             min-height: 100vh;
-        }
+}
 
         .container {
             max-width: 430px;
@@ -24,7 +24,7 @@
             min-height: 100vh;
             background: #000000;
             position: relative;
-        }
+}
 
         /* Header */
         .header {
@@ -34,30 +34,30 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            display: flex;
-            align-items: center;
+    display: flex;
+    align-items: center;
             gap: 16px;
-        }
+}
 
         .back-btn {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+    border-radius: 50%;
             background: #1a1a1a;
             border: 1px solid #333333;
             color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
             text-decoration: none;
             font-size: 18px;
             transition: all 0.3s ease;
-        }
+}
 
         .back-btn:hover {
             background: #333333;
             transform: scale(1.05);
-        }
+}
 
         .header-title {
             font-size: 24px;
@@ -71,15 +71,15 @@
 
         .form-group {
             margin-bottom: 24px;
-        }
+}
 
         .form-label {
             display: block;
             font-size: 16px;
-            font-weight: 600;
+    font-weight: 600;
             margin-bottom: 8px;
             color: #ffffff;
-        }
+}
 
         .form-input {
             width: 100%;
@@ -90,13 +90,13 @@
             color: #ffffff;
             font-size: 16px;
             transition: all 0.3s ease;
-        }
+}
 
         .form-input:focus {
             outline: none;
             border-color: #007AFF;
             background: #222222;
-        }
+}
 
         .form-textarea {
             min-height: 120px;
@@ -111,15 +111,15 @@
             background: #111111;
             border-radius: 20px;
             border: 1px solid #1a1a1a;
-        }
+}
 
         .current-avatar {
             width: 100px;
             height: 100px;
             border-radius: 50%;
             background: linear-gradient(135deg, #007AFF, #5856D6);
-            display: flex;
-            align-items: center;
+    display: flex;
+    align-items: center;
             justify-content: center;
             margin: 0 auto 16px;
             font-size: 36px;
@@ -127,11 +127,11 @@
             border: 4px solid rgba(0, 122, 255, 0.2);
             transition: all 0.3s ease;
             overflow: hidden;
-        }
+}
 
         .current-avatar.has-image {
             background: none;
-        }
+}
 
         .change-avatar-btn {
             background: #007AFF;
@@ -143,7 +143,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-        }
+}
 
         .change-avatar-btn:hover {
             background: #0056CC;
@@ -152,11 +152,11 @@
 
         /* Action Buttons */
         .action-buttons {
-            display: flex;
+    display: flex;
             gap: 12px;
             margin-top: 32px;
             padding: 0 20px 100px;
-        }
+}
 
         .btn {
             flex: 1;
@@ -166,18 +166,18 @@
             background: #1a1a1a;
             color: #ffffff;
             font-size: 16px;
-            font-weight: 600;
+    font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
             text-align: center;
-            display: flex;
-            align-items: center;
+    display: flex;
+    align-items: center;
             justify-content: center;
             gap: 8px;
-        }
+}
 
-        .btn-primary {
+.btn-primary {
             background: #007AFF;
             border-color: #007AFF;
         }
@@ -185,12 +185,12 @@
         .btn-danger {
             background: #FF3B30;
             border-color: #FF3B30;
-        }
+}
 
         .btn:hover {
-            transform: translateY(-2px);
+    transform: translateY(-2px);
             opacity: 0.8;
-        }
+}
 
         /* Bottom Navigation */
         .bottom-nav {
@@ -206,12 +206,12 @@
             padding: 16px 24px 32px;
             display: flex;
             justify-content: space-around;
-        }
+}
 
         .bottom-nav-item {
-            display: flex;
+    display: flex;
             flex-direction: column;
-            align-items: center;
+    align-items: center;
             text-decoration: none;
             color: #888888;
             transition: all 0.3s ease;
@@ -229,8 +229,8 @@
         .bottom-nav-label {
             font-size: 12px;
             font-weight: 500;
-        }
-    </style>
+}
+</style>
 </head>
 <body>
     <div class="container">
@@ -316,7 +316,7 @@
         </nav>
     </div>
 
-    <script>
+<script>
         // Variable pour stocker l'image sélectionnée
         let selectedAvatarFile = null;
 
@@ -326,8 +326,8 @@
         }
 
         // Fonction pour prévisualiser l'avatar sélectionné
-        function previewAvatar(input) {
-            if (input.files && input.files[0]) {
+function previewAvatar(input) {
+    if (input.files && input.files[0]) {
                 selectedAvatarFile = input.files[0];
                 
                 // Vérifier la taille du fichier (max 5MB)
@@ -359,7 +359,7 @@
                     setTimeout(() => {
                         avatarPreview.style.transform = 'scale(1)';
                     }, 300);
-                    
+            
                     // Changer le texte du bouton
                     const changeBtn = document.querySelector('.change-avatar-btn');
                     changeBtn.innerHTML = '✅ Photo sélectionnée';
@@ -368,11 +368,11 @@
                     // Feedback haptique
                     if (navigator.vibrate) {
                         navigator.vibrate(100);
-                    }
+        }
                 };
                 reader.readAsDataURL(selectedAvatarFile);
-            }
-        }
+    }
+}
 
         // Animation des champs de formulaire
         document.querySelectorAll('.form-input').forEach(input => {
@@ -395,9 +395,9 @@
                 
                 if (navigator.vibrate) {
                     navigator.vibrate(50);
-                }
+        }
             });
-        });
+});
 
         // Validation du formulaire
         document.getElementById('profileForm').addEventListener('submit', function(e) {
@@ -432,7 +432,7 @@
                 }
                 window.location.href = '{{ route("profile.show") }}';
             }, 1500);
-        });
-    </script>
+});
+</script>
 </body>
 </html>

@@ -16,7 +16,11 @@ Route::get('/', function () {
 
 // Routes de test rapide
 Route::get('/test', function () {
-    return "ZYMA is working perfectly!";
+    return response()->json([
+        'status' => 'success',
+        'message' => 'ZYMA Beta API working!',
+        'timestamp' => now()
+    ]);
 });
 
 // Route publique temporaire pour tester l'interface moderne
@@ -27,9 +31,8 @@ Route::get('/demo-interface', function () {
 Route::get('/health', function () {
     return response()->json([
         'status' => 'OK',
-        'app' => 'ZYMA',
-        'version' => '1.0-local',
-        'timestamp' => now()
+        'app' => 'ZYMA Beta',
+        'version' => '1.0.0'
     ]);
 });
 

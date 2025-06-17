@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', env('DATABASE_URL') ? 'pgsql' : 'sqlite'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,13 +32,9 @@ return [
     'connections' => [
         'sqlite' => [
             'driver' => 'sqlite',
-            'url' => env('DB_URL'),
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
+            'database' => database_path('database.sqlite'),
             'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
+            'foreign_key_constraints' => true,
         ],
 
         'mysql' => [
@@ -84,12 +80,12 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', parse_url(env('DATABASE_URL', ''), PHP_URL_HOST)),
-            'port' => env('DB_PORT', parse_url(env('DATABASE_URL', ''), PHP_URL_PORT)),
-            'database' => env('DB_DATABASE', ltrim(parse_url(env('DATABASE_URL', ''), PHP_URL_PATH), '/')),
-            'username' => env('DB_USERNAME', parse_url(env('DATABASE_URL', ''), PHP_URL_USER)),
-            'password' => env('DB_PASSWORD', parse_url(env('DATABASE_URL', ''), PHP_URL_PASS)),
-            'charset' => env('DB_CHARSET', 'utf8'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'laravel'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
@@ -141,32 +137,23 @@ return [
     */
 
     'redis' => [
-
-        'client' => env('REDIS_CLIENT', 'phpredis'),
-
+        'client' => 'phpredis',
         'options' => [
-            'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'cluster' => 'redis',
+            'prefix' => Str::slug(env('APP_NAME', 'laravel'), '_').'_database_',
         ],
-
         'default' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_DB', '0'),
+            'host' => '127.0.0.1',
+            'password' => null,
+            'port' => '6379',
+            'database' => '0',
         ],
-
         'cache' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_CACHE_DB', '1'),
+            'host' => '127.0.0.1',
+            'password' => null,
+            'port' => '6379',
+            'database' => '1',
         ],
-
     ],
 
 ];

@@ -280,13 +280,13 @@ class MealScoreController extends Controller
     {
         // Vérifier si l'utilisateur a des leagues et si la relation existe
         if ($user->leagues && $user->leagues->count() > 0) {
-            foreach ($user->leagues as $league) {
-                $league->updateMemberScore(
-                    $user, 
-                    $points, // weekly score
-                    $points, // monthly score
-                    $points  // total score
-                );
+        foreach ($user->leagues as $league) {
+            $league->updateMemberScore(
+                $user, 
+                $points, // weekly score
+                $points, // monthly score
+                $points  // total score
+            );
             }
         } else {
             // Log que l'utilisateur n'est dans aucune league

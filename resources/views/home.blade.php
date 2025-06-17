@@ -58,17 +58,17 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 12px;
             margin-bottom: 24px;
-        }
-
+    }
+    
         .stat-card {
             background: #111111;
             border-radius: 16px;
             border: 1px solid #1a1a1a;
             padding: 16px 12px;
-            text-align: center;
+        text-align: center;
             transition: all 0.3s ease;
-        }
-
+    }
+    
         .stat-card:hover {
             background: #1a1a1a;
             transform: translateY(-2px);
@@ -79,15 +79,15 @@
             font-weight: 800;
             color: #007AFF;
             margin-bottom: 4px;
-        }
-
+    }
+    
         .stat-label {
             font-size: 12px;
             color: #888888;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-
+    }
+    
         /* Feature Cards */
         .features-section {
             padding: 0 20px 20px;
@@ -99,7 +99,7 @@
             border: 1px solid #1a1a1a;
             margin-bottom: 16px;
             overflow: hidden;
-            transition: all 0.3s ease;
+        transition: all 0.3s ease;
         }
 
         .feature-card:hover {
@@ -109,27 +109,27 @@
 
         .feature-content {
             padding: 24px;
-            display: flex;
-            align-items: center;
+        display: flex;
+        align-items: center;
             gap: 16px;
-        }
-
+    }
+    
         .feature-icon {
             width: 48px;
             height: 48px;
             border-radius: 12px;
             background: rgba(0, 122, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
             font-size: 20px;
             flex-shrink: 0;
-        }
-
+    }
+    
         .feature-info {
-            flex: 1;
-        }
-
+        flex: 1;
+    }
+    
         .feature-title {
             font-size: 18px;
             font-weight: 700;
@@ -150,11 +150,11 @@
         /* Quick Actions */
         .actions-section {
             padding: 0 20px 20px;
-        }
-
+    }
+    
         .section-title {
             font-size: 20px;
-            font-weight: 700;
+        font-weight: 700;
             margin-bottom: 16px;
             padding-left: 4px;
         }
@@ -163,8 +163,8 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-        }
-
+    }
+    
         .action-btn {
             background: #111111;
             border: 1px solid #1a1a1a;
@@ -174,8 +174,8 @@
             text-decoration: none;
             color: #ffffff;
             transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+        display: flex;
+        flex-direction: column;
             align-items: center;
             gap: 8px;
         }
@@ -206,10 +206,10 @@
             border-radius: 20px;
             border: 1px solid #1a1a1a;
             padding: 24px;
-        }
-
-        .activity-empty {
-            text-align: center;
+    }
+    
+    .activity-empty {
+        text-align: center;
             padding: 32px 16px;
             color: #888888;
         }
@@ -223,8 +223,8 @@
         .activity-empty-text {
             font-size: 16px;
             margin-bottom: 8px;
-        }
-
+    }
+    
         .activity-empty-subtext {
             font-size: 14px;
             opacity: 0.7;
@@ -295,8 +295,8 @@
 
         .stat-card:nth-child(3) {
             animation-delay: 0.2s;
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
     <div class="container">

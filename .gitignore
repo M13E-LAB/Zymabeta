@@ -20,3 +20,20 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+
+APP_KEY=base64:mcSE07/xaGmT9Beq4xuzbFsd3SUJJTje8kFpZnUeW3k=
+APP_ENV=production  
+APP_DEBUG=false
+APP_URL=https://zymabeta-production.up.railway.app
+
+# Database (Railway génère automatiquement)
+DATABASE_URL=${{DATABASE_URL}}
+
+# Session & Cache
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+
+# Logs
+LOG_CHANNEL=errorlog
+LOG_LEVEL=error

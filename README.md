@@ -1,120 +1,142 @@
-# ZYMA - Le Hub Social de la Nutrition et des Prix
+# 🥗 ZYMA - Social Nutrition Beta App
 
-![Zyma Logo](public/images/logo.png)
+[![Laravel](https://img.shields.io/badge/Laravel-10.x-red.svg)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.1+-blue.svg)](https://php.net)
+[![Beta](https://img.shields.io/badge/Status-Beta%20Testing-orange.svg)](#beta)
+[![Deploy](https://img.shields.io/badge/Deploy-Railway%20|%20Heroku-success.svg)](#deployment)
 
-## Vision du Produit
+> **L'app sociale qui révolutionne votre nutrition ! 🚀**
 
-Zyma évolue vers une plateforme sociale complète dédiée à l'alimentation, la santé et l'optimisation des dépenses. Notre vision est de créer un écosystème où les utilisateurs peuvent partager leurs expériences alimentaires, trouver les meilleurs prix dans leur région, et être récompensés pour leur contribution à la communauté.
+ZYMA est une plateforme sociale moderne qui combine tracking nutritionnel intelligent, objectifs personnalisés et communauté engagée. Actuellement en **beta testing** - rejoignez l'aventure !
 
-## Modules Principaux
+## ✨ **Fonctionnalités Principales**
 
-### 1. 💰 Module Prix & Économies
-- **Comparateur de prix** entre différents magasins
-- **Alertes de prix** en temps réel
-- **Partage de bons plans** entre utilisateurs
-- **Historique des prix** des produits
-- **OCR de tickets** de caisse avec récompenses
+### 🎯 **Nutrition Intelligente**
+- **Tracking automatique** des calories et macronutriments
+- **Objectifs personnalisés** selon votre profil et objectifs
+- **Analyse nutritionnelle** avancée avec recommandations
+- **Base de données** alimentaire complète et française
 
-### 2. 🍽️ Module Social & Communauté
-- **Feed personnalisé** des découvertes alimentaires
-- **Partage de repas** avec notation nutritionnelle
-- **Recommandations de restaurants** avec prix moyens
-- **Groupes locaux** pour partage de bons plans
-- **Événements food** dans votre région
+### 👥 **Social & Communauté**
+- **Profils utilisateurs** avec progression visible
+- **Feed social** pour partager vos repas et succès
+- **Système de suivi** entre utilisateurs (friends/following)
+- **Challenges communautaires** et défis nutrition
 
-### 3. 🥗 Module Nutrition & Santé
-- **Analyse nutritionnelle** des produits scannés
-- **Suivi d'objectifs** alimentaires personnalisés
-- **Conseils nutritionnels** adaptés à vos habitudes
-- **Alternatives plus saines** pour vos produits préférés
-- **Badges de progression** pour vos objectifs santé
+### 📱 **Expérience Utilisateur**
+- **Interface moderne** et intuitive
+- **Dashboard personnel** avec statistiques visuelles
+- **Notifications intelligentes** pour vos objectifs
+- **Responsive design** - mobile first
 
-### 4. 🎮 Module Gamification & Récompenses
-- **Système de points** selon contributions
-- **Niveaux d'expertise** dans différents domaines
-- **Défis hebdomadaires** avec récompenses
-- **Cashback réel** sur achats vérifiés
-- **Statuts exclusifs** pour membres actifs
+## 🚀 **Beta Testing - Rejoignez-nous !**
 
-## Fonctionnalités Innovantes Planifiées
+### **Pourquoi participer ?**
+- 🎁 **Accès gratuit** à vie aux fonctionnalités premium
+- 🏆 **Influence directe** sur le développement
+- 💰 **Récompenses** pour les feedbacks de qualité
+- 🌟 **Badge Beta Tester** exclusif
 
-### Scan & Cashback
-Uploadez vos tickets de caisse pour obtenir:
-- Validation automatique des prix
-- Points de fidélité
-- Cashback sur certains produits
-- Statistiques de vos dépenses alimentaires
+### **Comment rejoindre ?**
+1. **Téléchargez** l'app : [zyma-beta.herokuapp.com](https://zyma-beta-app-6a50456f2375.herokuapp.com)
+2. **Inscrivez-vous** avec le code : `BETA2024`
+3. **Testez** pendant 2 semaines minimum
+4. **Partagez** vos retours via l'app ou nos réseaux
 
-### Communauté Locale
-- Trouvez les meilleurs deals près de chez vous
-- Organisez des achats groupés
-- Partagez vos découvertes culinaires
-- Créez des événements autour de la nourriture
-
-### Intelligence Artificielle
-- Suggestions personnalisées selon vos habitudes
-- Prédiction des variations de prix
-- Analyse nutritionnelle avancée
-- Recommandations adaptées à vos objectifs santé
-
-## Phases de Développement
-
-### Phase 1: Fondations (Actuel)
-- ✅ Comparateur de prix entre magasins
-- ✅ Base de données produits
-- ✅ Interface utilisateur de base
-
-### Phase 2: Social & Engagement (Q3 2025)
-- Profils utilisateurs
-- Système de partage
-- Feed d'activité
-- Commentaires et likes
-
-### Phase 3: Monétisation & Récompenses (Q4 2025)
-- Système de cashback
-- OCR des tickets de caisse
-- Partenariats avec enseignes
-- Programme de fidélité
-
-### Phase 4: Expansion & Intelligence (Q1 2026)
-- Analyse nutritionnelle avancée
-- IA prédictive pour les prix
-- Recommandations personnalisées
-- API publique
-
-## Contribuer au Projet
-
-Nous recherchons activement des collaborateurs dans les domaines suivants:
-- Développement frontend (Vue.js/React)
-- Machine Learning pour OCR et prédictions
-- UX/UI Design
-- Expertise en nutrition
-- Growth Hacking & Marketing
-
-Pour contribuer, contactez-nous à team@zyma-app.com ou créez une pull request.
-
-## Installation pour Développeurs
+## 🛠 **Tech Stack**
 
 ```bash
-# Cloner le dépôt
-git clone https://github.com/M13E-LAB/Zymaproject.git
+Backend:      Laravel 10.x + PHP 8.1+
+Database:     PostgreSQL
+Frontend:     Blade + Tailwind CSS + Alpine.js
+Deployment:   Railway / Heroku
+Storage:      Cloud Storage (images)
+API:          RESTful + JSON responses
+```
 
-# Installer les dépendances
+## 📥 **Installation Développeur**
+
+### **Prérequis**
+- PHP 8.1+
+- Composer
+- Node.js 18+
+- PostgreSQL
+
+### **Installation Rapide**
+```bash
+# Clone le repo
+git clone https://github.com/[username]/zyma-beta.git
+cd zyma-beta
+
+# Install dependencies
 composer install
 npm install
 
-# Configuration environnement
+# Configuration
 cp .env.example .env
 php artisan key:generate
 
-# Lancer le serveur
+# Database
+php artisan migrate
+php artisan db:seed
+
+# Assets
+npm run build
+
+# Launch
 php artisan serve
 ```
 
-## Licence
+## 🚀 **Déploiement**
 
-Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+### **Railway (Recommandé)**
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/[username]/zyma-beta)
+
+### **Heroku**
+```bash
+heroku create zyma-app
+heroku addons:create heroku-postgresql:mini
+git push heroku main
+heroku run php artisan migrate
+```
+
+Voir [DEPLOYMENT_BETA.md](DEPLOYMENT_BETA.md) pour le guide complet.
+
+## 📊 **Métriques Beta**
+
+- 🎯 **Objectif**: 500 beta testeurs
+- 📱 **Statut**: En cours de recrutement
+- 💬 **Feedbacks**: Collectés via app + Discord
+- 🏆 **Récompenses**: Points Beta convertibles
+
+## 🤝 **Contribuer**
+
+### **Beta Testeurs**
+- Utilisez l'app quotidiennement
+- Reportez les bugs via l'interface
+- Proposez des améliorations
+- Partagez sur vos réseaux
+
+### **Développeurs**
+1. Fork le projet
+2. Créez votre branche (`git checkout -b feature/amazing-feature`)
+3. Committez vos changements (`git commit -m 'Add amazing feature'`)
+4. Push vers la branche (`git push origin feature/amazing-feature`)
+5. Ouvrez une Pull Request
+
+## 📞 **Contact & Support**
+
+- 📧 **Email**: beta@zyma.app
+- 💬 **Discord**: [ZYMA Beta Community](https://discord.gg/zyma-beta)
+- 📱 **Instagram**: [@zyma.app](https://instagram.com/zyma.app)
+- 🐦 **Twitter**: [@ZymaApp](https://twitter.com/ZymaApp)
+
+## 📄 **Licence**
+
+Ce projet est sous licence MIT - voir [LICENSE](LICENSE) pour les détails.
 
 ---
 
-**Rejoignez la révolution alimentaire et économique avec Zyma!**
+**Fait avec ❤️ par l'équipe ZYMA**
+
+*Transformons ensemble notre rapport à la nutrition !* 🌟

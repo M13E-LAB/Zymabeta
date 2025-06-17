@@ -149,7 +149,7 @@
 
         .capture-btn:active {
             transform: scale(0.98);
-        }
+}
 
         /* User's today post */
         .my-post-section {
@@ -182,19 +182,19 @@
             background: #111111;
             border-radius: 20px;
             margin-bottom: 20px;
-            overflow: hidden;
+    overflow: hidden;
             border: 1px solid #1a1a1a;
             transition: all 0.3s ease;
         }
 
         .post:active {
             transform: scale(0.98);
-        }
+}
 
-        .post-image {
-            width: 100%;
+.post-image {
+    width: 100%;
             height: 320px;
-            object-fit: cover;
+    object-fit: cover;
             display: block;
         }
 
@@ -203,19 +203,19 @@
         }
 
         .post-header {
-            display: flex;
-            align-items: center;
+    display: flex;
+    align-items: center;
             margin-bottom: 16px;
         }
 
         .user-avatar {
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+    border-radius: 50%;
             background: linear-gradient(135deg, #007AFF, #5856D6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
             color: #ffffff;
             font-weight: 700;
             font-size: 16px;
@@ -298,10 +298,10 @@
         }
 
         /* Post actions */
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid #1a1a1a;
@@ -352,9 +352,9 @@
         }
 
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
             text-decoration: none;
             color: #888888;
             transition: all 0.3s ease;
@@ -458,8 +458,8 @@
                         <div class="meal-info">
                             <h3 class="meal-name">{{ $userTodayPost->product_name }}</h3>
                             <p class="meal-details">{{ $userTodayPost->store_name }} • {{ $userTodayPost->created_at->format('H:i') }}</p>
-                        </div>
-                        
+            </div>
+
                         @if($userTodayPost->mealScore)
                         <div class="ai-score">
                             <div class="score-header">
@@ -492,20 +492,20 @@
                 <h3 class="section-title">Repas de vos amis</h3>
                 
                 @forelse($posts->where('user_id', '!=', auth()->id()) as $post)
-                <article class="post">
+            <article class="post">
                     <img src="{{ $post->image ?? 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=320&fit=crop' }}" 
-                         alt="{{ $post->product_name }}" 
-                         class="post-image">
-                    
-                    <div class="post-content">
-                        <div class="post-header">
-                            <div class="user-avatar">
-                                {{ substr($post->user->name, 0, 1) }}
-                            </div>
-                            <div class="user-info">
-                                <div class="user-name">{{ $post->user->name }}</div>
-                                <div class="post-time">{{ $post->created_at->diffForHumans() }}</div>
-                            </div>
+                     alt="{{ $post->product_name }}" 
+                     class="post-image">
+                
+                <div class="post-content">
+                    <div class="post-header">
+                        <div class="user-avatar">
+                            {{ substr($post->user->name, 0, 1) }}
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ $post->user->name }}</div>
+                            <div class="post-time">{{ $post->created_at->diffForHumans() }}</div>
+                        </div>
                         </div>
 
                         <div class="meal-info">
@@ -514,39 +514,39 @@
                             @if($post->description)
                                 <p class="meal-description">{{ $post->description }}</p>
                             @endif
-                        </div>
+                    </div>
 
                         @if($post->mealScore)
                         <div class="ai-score">
                             <div class="score-header">
                                 <span>🤖</span>
                                 <span class="score-title">Score IA</span>
-                            </div>
+                    </div>
                             <div class="score-grid">
                                 <div class="score-item">
                                     <div class="score-value">{{ $post->mealScore->health_score }}/100</div>
                                     <div class="score-label">Santé</div>
-                                </div>
+                    </div>
                                 <div class="score-item">
                                     <div class="score-value">{{ $post->mealScore->visual_score }}/100</div>
                                     <div class="score-label">Visuel</div>
-                                </div>
+                        </div>
                                 <div class="score-item">
                                     <div class="score-value">{{ $post->mealScore->total_score }}/100</div>
                                     <div class="score-label">Total</div>
-                                </div>
-                            </div>
+                    </div>
+                </div>
                         </div>
                         @endif
 
-                        <div class="post-actions">
-                            <div class="action-group">
-                                <button class="action-btn">
+                    <div class="post-actions">
+                        <div class="action-group">
+                            <button class="action-btn">
                                     ❤️ {{ $post->likes_count ?? 0 }}
-                                </button>
-                                <button class="action-btn">
+                            </button>
+                            <button class="action-btn">
                                     💬 {{ $post->comments_count ?? 0 }}
-                                </button>
+                            </button>
                             </div>
                         </div>
                     </div>
@@ -557,7 +557,7 @@
                     <p>Aucun ami n'a encore posté aujourd'hui...</p>
                 </div>
                 @endforelse
-            </div>
+        </div>
         @endif
 
         <!-- Bottom Navigation -->
@@ -592,8 +592,8 @@
                     if (navigator.vibrate) {
                         navigator.vibrate(50);
                     }
-                });
             });
+        });
 
             // Add smooth scroll behavior
             document.documentElement.style.scrollBehavior = 'smooth';
@@ -607,7 +607,7 @@
                 }
                 lastTouchEnd = now;
             }, false);
-        });
-    </script>
+    });
+</script>
 </body>
 </html> 
