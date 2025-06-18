@@ -45,31 +45,31 @@ RUN mkdir -p /var/www/storage/logs \
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
-# Enable error reporting for debugging\n\
-set -e\n\
+# Enable verbose error reporting\n\
+set -ex\n\
 \n\
-echo "=== Starting Laravel setup ===" >&2\n\
+echo "=== Starting Laravel setup with full debugging ===" >&2\n\
 \n\
 # Change to the correct directory\n\
 cd /var/www\n\
 \n\
+# Show environment\n\
+echo "=== Environment Variables ===" >&2\n\
+env | grep -E "(APP_|DB_|LOG_)" >&2 || echo "No APP/DB/LOG vars found" >&2\n\
+\n\
 # Create .env file if it does not exist\n\
 if [ ! -f .env ]; then\n\
-    echo "Creating .env file..." >&2\n\
-    if [ -f .env.example ]; then\n\
-        cp .env.example .env\n\
-        echo ".env created from .env.example" >&2\n\
-    else\n\
-        echo "Creating default .env file..." >&2\n\
-        cat > .env << EOF\n\
+    echo "Creating default .env file..." >&2\n\
+    cat > .env << EOF\n\
 APP_NAME=ZYMA\n\
 APP_ENV=production\n\
 APP_KEY=\n\
-APP_DEBUG=false\n\
+APP_DEBUG=true\n\
 APP_URL=https://zymabeta.onrender.com\n\
 \n\
 LOG_CHANNEL=stderr\n\
-LOG_LEVEL=info\n\
+LOG_LEVEL=debug\n\
+LOG_STACK=stderr\n\
 \n\
 DB_CONNECTION=sqlite\n\
 DB_DATABASE=/var/www/database/database.sqlite\n\
@@ -81,72 +81,80 @@ QUEUE_CONNECTION=sync\n\
 BROADCAST_CONNECTION=log\n\
 FILESYSTEM_DISK=local\n\
 EOF\n\
-    fi\n\
 else\n\
     echo ".env file already exists" >&2\n\
 fi\n\
 \n\
-# Ensure the .env file is readable\n\
-chmod 644 .env\n\
-chown www-data:www-data .env\n\
-\n\
-# Show current .env content for debugging\n\
+# Show .env content\n\
 echo "=== Current .env file ===" >&2\n\
 cat .env >&2\n\
 echo "=========================" >&2\n\
 \n\
-# Generate APP_KEY if empty or missing\n\
-echo "Checking APP_KEY..." >&2\n\
+# Generate APP_KEY if empty\n\
 if ! grep -q "APP_KEY=base64:" .env; then\n\
-    echo "Generating new APP_KEY..." >&2\n\
+    echo "Generating APP_KEY..." >&2\n\
     php artisan key:generate --force --no-interaction\n\
-    echo "APP_KEY generated successfully" >&2\n\
-else\n\
-    echo "APP_KEY already exists" >&2\n\
+    echo "APP_KEY generated" >&2\n\
 fi\n\
 \n\
-# Clear any existing cache before proceeding\n\
-echo "Clearing Laravel cache..." >&2\n\
-php artisan cache:clear --no-interaction 2>/dev/null || echo "Cache clear failed (normal on first run)" >&2\n\
-php artisan config:clear --no-interaction 2>/dev/null || echo "Config clear failed (normal on first run)" >&2\n\
-php artisan route:clear --no-interaction 2>/dev/null || echo "Route clear failed (normal on first run)" >&2\n\
-php artisan view:clear --no-interaction 2>/dev/null || echo "View clear failed (normal on first run)" >&2\n\
+# Test PHP and Laravel\n\
+echo "=== Testing PHP and Laravel ===" >&2\n\
+php --version >&2\n\
+php artisan --version >&2 || echo "Laravel not responding!" >&2\n\
 \n\
-# Initialize SQLite database\n\
-echo "=== Initializing SQLite database ===" >&2\n\
+# Clear cache\n\
+echo "Clearing cache..." >&2\n\
+php artisan cache:clear --no-interaction 2>&1 || echo "Cache clear failed" >&2\n\
+php artisan config:clear --no-interaction 2>&1 || echo "Config clear failed" >&2\n\
 \n\
-# Ensure database directory exists\n\
+# Initialize database\n\
+echo "=== Database setup ===" >&2\n\
 mkdir -p /var/www/database\n\
-\n\
-# Create or reset database file\n\
 touch /var/www/database/database.sqlite\n\
 chmod 664 /var/www/database/database.sqlite\n\
 chown www-data:www-data /var/www/database/database.sqlite\n\
 \n\
-# Initialize database with fresh migrations\n\
-echo "Running fresh migrations..." >&2\n\
-php artisan migrate:fresh --force --no-interaction --seed 2>&1 || {\n\
-    echo "Fresh migration failed, trying regular migrate..." >&2\n\
-    php artisan migrate --force --no-interaction 2>&1 || {\n\
-        echo "Regular migration also failed, trying to continue..." >&2\n\
-    }\n\
+# Test database connection\n\
+echo "Testing database connection..." >&2\n\
+php artisan db:show >&2 || echo "DB connection test failed" >&2\n\
+\n\
+# Run migrations\n\
+echo "Running migrations..." >&2\n\
+php artisan migrate:fresh --force --no-interaction 2>&1 || {\n\
+    echo "Fresh migration failed, trying regular..." >&2\n\
+    php artisan migrate --force --no-interaction 2>&1 || echo "Migration failed completely" >&2\n\
 }\n\
 \n\
-# Cache Laravel configurations after database is ready\n\
-echo "Caching Laravel configurations..." >&2\n\
-php artisan config:cache --no-interaction\n\
-php artisan route:cache --no-interaction\n\
-php artisan view:cache --no-interaction\n\
+# Test a simple route\n\
+echo "=== Testing Laravel routing ===" >&2\n\
+php artisan route:list >&2 || echo "Route list failed" >&2\n\
 \n\
-# Create storage link\n\
-echo "Creating storage link..." >&2\n\
-php artisan storage:link --no-interaction 2>/dev/null || echo "Storage link already exists" >&2\n\
+# Cache configurations\n\
+echo "Caching configurations..." >&2\n\
+php artisan config:cache --no-interaction >&2\n\
+php artisan route:cache --no-interaction >&2\n\
+php artisan view:cache --no-interaction >&2\n\
 \n\
-echo "=== Laravel setup completed successfully ===" >&2\n\
+# Final test\n\
+echo "=== Final Laravel test ===" >&2\n\
+php artisan tinker --execute="echo \"Laravel is working!\";" >&2 || echo "Laravel test failed!" >&2\n\
 \n\
-# Start supervisor\n\
-echo "Starting supervisor..." >&2\n\
-/usr/bin/supervisord\n\
+echo "=== Starting web servers ===" >&2\n\
+\n\
+# Start PHP-FPM in background\n\
+echo "Starting PHP-FPM..." >&2\n\
+php-fpm -D\n\
+\n\
+# Start Nginx in background\n\
+echo "Starting Nginx..." >&2\n\
+nginx -g "daemon off;" &\n\
+\n\
+# Keep container running and show logs\n\
+echo "=== Services started, monitoring logs ===" >&2\n\
+tail -f /var/log/nginx/error.log /var/www/storage/logs/laravel.log 2>/dev/null &\n\
+\n\
+# Wait forever\n\
+wait\n\
 ' > /var/www/startup.sh && chmod +x /var/www/startup.sh
 
 # Create nginx config
