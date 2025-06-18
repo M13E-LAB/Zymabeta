@@ -59,13 +59,6 @@ if [ ! -f .env ]; then\n\
         echo "LOG_CHANNEL=stack" >> .env\n\
         echo "LOG_LEVEL=error" >> .env\n\
         echo "" >> .env\n\
-        echo "DB_CONNECTION=${DATABASE_URL:+pgsql}" >> .env\n\
-        echo "DB_HOST=${DB_HOST:-127.0.0.1}" >> .env\n\
-        echo "DB_PORT=${DB_PORT:-5432}" >> .env\n\
-        echo "DB_DATABASE=${DB_DATABASE:-laravel}" >> .env\n\
-        echo "DB_USERNAME=${DB_USERNAME:-root}" >> .env\n\
-        echo "DB_PASSWORD=${DB_PASSWORD:-}" >> .env\n\
-        echo "" >> .env\n\
         echo "SESSION_DRIVER=database" >> .env\n\
         echo "CACHE_STORE=database" >> .env\n\
         echo "QUEUE_CONNECTION=database" >> .env\n\
@@ -76,13 +69,31 @@ fi\n\
 sed -i "s/APP_ENV=local/APP_ENV=production/" .env\n\
 sed -i "s/APP_DEBUG=true/APP_DEBUG=false/" .env\n\
 \n\
-# Configure database connection for Render PostgreSQL\n\
+# Configure database connection for Render\n\
 if [ ! -z "$DATABASE_URL" ]; then\n\
+    # Parse DATABASE_URL for Render PostgreSQL\n\
+    echo "DATABASE_URL found, configuring PostgreSQL..." >&2\n\
     sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env\n\
-elif [ ! -z "$DB_HOST" ]; then\n\
+    echo "DATABASE_URL=$DATABASE_URL" >> .env\n\
+elif [ ! -z "$PGHOST" ]; then\n\
+    # Alternative PostgreSQL environment variables\n\
+    echo "PostgreSQL environment variables found..." >&2\n\
     sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env\n\
+    sed -i "s/DB_HOST=.*/DB_HOST=$PGHOST/" .env\n\
+    sed -i "s/DB_PORT=.*/DB_PORT=${PGPORT:-5432}/" .env\n\
+    sed -i "s/DB_DATABASE=.*/DB_DATABASE=$PGDATABASE/" .env\n\
+    sed -i "s/DB_USERNAME=.*/DB_USERNAME=$PGUSER/" .env\n\
+    sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$PGPASSWORD/" .env\n\
 else\n\
+    # Fallback to SQLite\n\
+    echo "No PostgreSQL config found, using SQLite..." >&2\n\
     sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=sqlite/" .env\n\
+    sed -i "s/DB_DATABASE=.*/DB_DATABASE=\\/var\\/www\\/database\\/database.sqlite/" .env\n\
+fi\n\
+\n\
+# Set APP_URL if provided\n\
+if [ ! -z "$APP_URL" ]; then\n\
+    sed -i "s|APP_URL=.*|APP_URL=$APP_URL|" .env\n\
 fi\n\
 \n\
 # Generate key if not exists\n\
@@ -90,8 +101,15 @@ if ! grep -q "APP_KEY=" .env || [ "$(grep "APP_KEY=" .env | cut -d= -f2)" = "" ]
     php artisan key:generate --no-interaction --force\n\
 fi\n\
 \n\
-# Run migrations\n\
-php artisan migrate --force\n\
+# Test database connection before migration\n\
+echo "Testing database connection..." >&2\n\
+if php artisan migrate:status --no-interaction 2>/dev/null; then\n\
+    echo "Database connection successful, running migrations..." >&2\n\
+    php artisan migrate --force\n\
+else\n\
+    echo "Database connection failed, check configuration" >&2\n\
+    cat .env | grep -E "(DB_|DATABASE_)" >&2\n\
+fi\n\
 \n\
 # Cache configuration\n\
 php artisan config:cache\n\
