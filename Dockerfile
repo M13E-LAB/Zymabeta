@@ -13,13 +13,14 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     sqlite3 \
     libsqlite3-dev \
-    pkg-config
+    pkg-config \
+    libpq-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql pdo_sqlite pdo_pgsql mbstring exif pcntl bcmath gd
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -46,18 +47,47 @@ RUN mkdir -p /var/www/storage/logs \
 RUN echo '#!/bin/bash\n\
 # Setup Laravel environment\n\
 if [ ! -f .env ]; then\n\
-    cp .env.example .env\n\
+    if [ -f .env.example ]; then\n\
+        cp .env.example .env\n\
+    else\n\
+        echo "APP_NAME=ZYMA" > .env\n\
+        echo "APP_ENV=production" >> .env\n\
+        echo "APP_KEY=" >> .env\n\
+        echo "APP_DEBUG=false" >> .env\n\
+        echo "APP_URL=${APP_URL:-http://localhost}" >> .env\n\
+        echo "" >> .env\n\
+        echo "LOG_CHANNEL=stack" >> .env\n\
+        echo "LOG_LEVEL=error" >> .env\n\
+        echo "" >> .env\n\
+        echo "DB_CONNECTION=${DATABASE_URL:+pgsql}" >> .env\n\
+        echo "DB_HOST=${DB_HOST:-127.0.0.1}" >> .env\n\
+        echo "DB_PORT=${DB_PORT:-5432}" >> .env\n\
+        echo "DB_DATABASE=${DB_DATABASE:-laravel}" >> .env\n\
+        echo "DB_USERNAME=${DB_USERNAME:-root}" >> .env\n\
+        echo "DB_PASSWORD=${DB_PASSWORD:-}" >> .env\n\
+        echo "" >> .env\n\
+        echo "SESSION_DRIVER=database" >> .env\n\
+        echo "CACHE_STORE=database" >> .env\n\
+        echo "QUEUE_CONNECTION=database" >> .env\n\
+    fi\n\
 fi\n\
 \n\
-# Set production environment\n\
+# Set production environment variables\n\
 sed -i "s/APP_ENV=local/APP_ENV=production/" .env\n\
 sed -i "s/APP_DEBUG=true/APP_DEBUG=false/" .env\n\
-sed -i "s/DB_CONNECTION=mysql/DB_CONNECTION=sqlite/" .env\n\
-sed -i "s/DB_DATABASE=laravel/#DB_DATABASE=/" .env\n\
+\n\
+# Configure database connection for Render PostgreSQL\n\
+if [ ! -z "$DATABASE_URL" ]; then\n\
+    sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env\n\
+elif [ ! -z "$DB_HOST" ]; then\n\
+    sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env\n\
+else\n\
+    sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=sqlite/" .env\n\
+fi\n\
 \n\
 # Generate key if not exists\n\
 if ! grep -q "APP_KEY=" .env || [ "$(grep "APP_KEY=" .env | cut -d= -f2)" = "" ]; then\n\
-    php artisan key:generate --no-interaction\n\
+    php artisan key:generate --no-interaction --force\n\
 fi\n\
 \n\
 # Run migrations\n\
