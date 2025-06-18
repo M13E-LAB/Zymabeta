@@ -45,8 +45,13 @@ RUN mkdir -p /var/www/storage/logs \
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
+# Enable error reporting for debugging\n\
+set -e\n\
+\n\
 # Setup Laravel environment\n\
+echo "=== Starting Laravel setup ===" >&2\n\
 if [ ! -f .env ]; then\n\
+    echo "Creating .env file..." >&2\n\
     if [ -f .env.example ]; then\n\
         cp .env.example .env\n\
     else\n\
@@ -56,7 +61,7 @@ if [ ! -f .env ]; then\n\
         echo "APP_DEBUG=false" >> .env\n\
         echo "APP_URL=${APP_URL:-http://localhost}" >> .env\n\
         echo "" >> .env\n\
-        echo "LOG_CHANNEL=stack" >> .env\n\
+        echo "LOG_CHANNEL=stderr" >> .env\n\
         echo "LOG_LEVEL=error" >> .env\n\
         echo "" >> .env\n\
         echo "SESSION_DRIVER=database" >> .env\n\
@@ -66,8 +71,10 @@ if [ ! -f .env ]; then\n\
 fi\n\
 \n\
 # Set production environment variables\n\
+echo "Configuring environment..." >&2\n\
 sed -i "s/APP_ENV=local/APP_ENV=production/" .env\n\
 sed -i "s/APP_DEBUG=true/APP_DEBUG=false/" .env\n\
+sed -i "s/LOG_CHANNEL=stack/LOG_CHANNEL=stderr/" .env\n\
 \n\
 # Configure database connection for Render\n\
 if [ ! -z "$DATABASE_URL" ]; then\n\
@@ -114,47 +121,62 @@ if [ ! -z "$APP_URL" ]; then\n\
 fi\n\
 \n\
 # Generate key if not exists or empty\n\
+echo "Generating APP_KEY..." >&2\n\
 if ! grep -q "APP_KEY=" .env || [ "$(grep "APP_KEY=" .env | cut -d= -f2)" = "" ]; then\n\
     php artisan key:generate --no-interaction --force\n\
 fi\n\
 \n\
 # Clear Laravel cache after env is properly configured\n\
+echo "Clearing Laravel cache..." >&2\n\
 php artisan config:clear 2>/dev/null || true\n\
 php artisan cache:clear 2>/dev/null || true\n\
 \n\
 # Debug: Show current database configuration\n\
-echo "Current database configuration:" >&2\n\
-cat .env | grep -E "(DB_|DATABASE_|APP_KEY)" >&2\n\
+echo "=== Current configuration ===" >&2\n\
+cat .env | grep -E "(DB_|DATABASE_|APP_KEY|LOG_)" >&2\n\
 \n\
 # Initialize database if using SQLite\n\
 if grep -q "DB_CONNECTION=sqlite" .env; then\n\
-    echo "Initializing SQLite database..." >&2\n\
+    echo "=== Initializing SQLite database ===" >&2\n\
     # Ensure database file exists and has proper permissions\n\
     touch /var/www/database/database.sqlite\n\
     chmod 664 /var/www/database/database.sqlite\n\
     chown www-data:www-data /var/www/database/database.sqlite\n\
     # Run fresh migrations for SQLite\n\
-    php artisan migrate:fresh --force --seed 2>/dev/null || php artisan migrate --force\n\
+    echo "Running migrations..." >&2\n\
+    php artisan migrate:fresh --force --seed 2>&1 || {\n\
+        echo "Migration failed, trying regular migrate..." >&2\n\
+        php artisan migrate --force 2>&1 || {\n\
+            echo "Regular migrate also failed!" >&2\n\
+            exit 1\n\
+        }\n\
+    }\n\
 else\n\
     # Test database connection for PostgreSQL\n\
-    echo "Testing PostgreSQL connection..." >&2\n\
+    echo "=== Testing PostgreSQL connection ===" >&2\n\
     if php artisan migrate:status --no-interaction 2>/dev/null; then\n\
         echo "Database connection successful, running migrations..." >&2\n\
         php artisan migrate --force\n\
     else\n\
         echo "Database connection failed, check configuration" >&2\n\
+        exit 1\n\
     fi\n\
 fi\n\
 \n\
 # Cache configuration\n\
+echo "Caching Laravel configurations..." >&2\n\
 php artisan config:cache\n\
 php artisan route:cache\n\
 php artisan view:cache\n\
 \n\
 # Create storage link\n\
+echo "Creating storage link..." >&2\n\
 php artisan storage:link\n\
 \n\
+echo "=== Laravel setup completed successfully ===" >&2\n\
+\n\
 # Start supervisor\n\
+echo "Starting supervisor..." >&2\n\
 /usr/bin/supervisord\n\
 ' > /var/www/startup.sh && chmod +x /var/www/startup.sh
 
