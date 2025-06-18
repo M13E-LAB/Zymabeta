@@ -65,10 +65,6 @@ if [ ! -f .env ]; then\n\
     fi\n\
 fi\n\
 \n\
-# Clear Laravel cache first to avoid config conflicts\n\
-php artisan config:clear 2>/dev/null || true\n\
-php artisan cache:clear 2>/dev/null || true\n\
-\n\
 # Set production environment variables\n\
 sed -i "s/APP_ENV=local/APP_ENV=production/" .env\n\
 sed -i "s/APP_DEBUG=true/APP_DEBUG=false/" .env\n\
@@ -117,22 +113,37 @@ if [ ! -z "$APP_URL" ]; then\n\
     sed -i "s|APP_URL=.*|APP_URL=$APP_URL|" .env\n\
 fi\n\
 \n\
-# Generate key if not exists\n\
+# Generate key if not exists or empty\n\
 if ! grep -q "APP_KEY=" .env || [ "$(grep "APP_KEY=" .env | cut -d= -f2)" = "" ]; then\n\
     php artisan key:generate --no-interaction --force\n\
 fi\n\
 \n\
+# Clear Laravel cache after env is properly configured\n\
+php artisan config:clear 2>/dev/null || true\n\
+php artisan cache:clear 2>/dev/null || true\n\
+\n\
 # Debug: Show current database configuration\n\
 echo "Current database configuration:" >&2\n\
-cat .env | grep -E "(DB_|DATABASE_)" >&2\n\
+cat .env | grep -E "(DB_|DATABASE_|APP_KEY)" >&2\n\
 \n\
-# Test database connection before migration\n\
-echo "Testing database connection..." >&2\n\
-if php artisan migrate:status --no-interaction 2>/dev/null; then\n\
-    echo "Database connection successful, running migrations..." >&2\n\
-    php artisan migrate --force\n\
+# Initialize database if using SQLite\n\
+if grep -q "DB_CONNECTION=sqlite" .env; then\n\
+    echo "Initializing SQLite database..." >&2\n\
+    # Ensure database file exists and has proper permissions\n\
+    touch /var/www/database/database.sqlite\n\
+    chmod 664 /var/www/database/database.sqlite\n\
+    chown www-data:www-data /var/www/database/database.sqlite\n\
+    # Run fresh migrations for SQLite\n\
+    php artisan migrate:fresh --force --seed 2>/dev/null || php artisan migrate --force\n\
 else\n\
-    echo "Database connection failed, attempting to continue..." >&2\n\
+    # Test database connection for PostgreSQL\n\
+    echo "Testing PostgreSQL connection..." >&2\n\
+    if php artisan migrate:status --no-interaction 2>/dev/null; then\n\
+        echo "Database connection successful, running migrations..." >&2\n\
+        php artisan migrate --force\n\
+    else\n\
+        echo "Database connection failed, check configuration" >&2\n\
+    fi\n\
 fi\n\
 \n\
 # Cache configuration\n\
