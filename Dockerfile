@@ -48,130 +48,99 @@ RUN echo '#!/bin/bash\n\
 # Enable error reporting for debugging\n\
 set -e\n\
 \n\
-# Setup Laravel environment\n\
 echo "=== Starting Laravel setup ===" >&2\n\
+\n\
+# Change to the correct directory\n\
+cd /var/www\n\
+\n\
+# Create .env file if it does not exist\n\
 if [ ! -f .env ]; then\n\
     echo "Creating .env file..." >&2\n\
     if [ -f .env.example ]; then\n\
         cp .env.example .env\n\
+        echo ".env created from .env.example" >&2\n\
     else\n\
-        echo "APP_NAME=ZYMA" > .env\n\
-        echo "APP_ENV=production" >> .env\n\
-        echo "APP_KEY=" >> .env\n\
-        echo "APP_DEBUG=false" >> .env\n\
-        echo "APP_URL=${APP_URL:-http://localhost}" >> .env\n\
-        echo "" >> .env\n\
-        echo "LOG_CHANNEL=stderr" >> .env\n\
-        echo "LOG_LEVEL=error" >> .env\n\
-        echo "" >> .env\n\
-        echo "SESSION_DRIVER=database" >> .env\n\
-        echo "CACHE_STORE=database" >> .env\n\
-        echo "QUEUE_CONNECTION=database" >> .env\n\
+        echo "Creating default .env file..." >&2\n\
+        cat > .env << EOF\n\
+APP_NAME=ZYMA\n\
+APP_ENV=production\n\
+APP_KEY=\n\
+APP_DEBUG=false\n\
+APP_URL=https://zymabeta.onrender.com\n\
+\n\
+LOG_CHANNEL=stderr\n\
+LOG_LEVEL=info\n\
+\n\
+DB_CONNECTION=sqlite\n\
+DB_DATABASE=/var/www/database/database.sqlite\n\
+\n\
+CACHE_STORE=file\n\
+SESSION_DRIVER=file\n\
+QUEUE_CONNECTION=sync\n\
+\n\
+BROADCAST_CONNECTION=log\n\
+FILESYSTEM_DISK=local\n\
+EOF\n\
     fi\n\
-fi\n\
-\n\
-# Set production environment variables\n\
-echo "Configuring environment..." >&2\n\
-sed -i "s/APP_ENV=local/APP_ENV=production/" .env\n\
-sed -i "s/APP_DEBUG=true/APP_DEBUG=false/" .env\n\
-sed -i "s/LOG_CHANNEL=stack/LOG_CHANNEL=stderr/" .env\n\
-\n\
-# Configure database connection for Render\n\
-if [ ! -z "$DATABASE_URL" ]; then\n\
-    # Parse DATABASE_URL for Render PostgreSQL\n\
-    echo "DATABASE_URL found, configuring PostgreSQL..." >&2\n\
-    sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env\n\
-    # Remove any existing DATABASE_URL line\n\
-    sed -i "/^DATABASE_URL=/d" .env\n\
-    echo "DATABASE_URL=$DATABASE_URL" >> .env\n\
-    # Remove SQLite specific configs\n\
-    sed -i "/^DB_DATABASE=.*\\.sqlite/d" .env\n\
-elif [ ! -z "$PGHOST" ]; then\n\
-    # Alternative PostgreSQL environment variables\n\
-    echo "PostgreSQL environment variables found..." >&2\n\
-    sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env\n\
-    sed -i "s/DB_HOST=.*/DB_HOST=$PGHOST/" .env\n\
-    sed -i "s/DB_PORT=.*/DB_PORT=${PGPORT:-5432}/" .env\n\
-    sed -i "s/DB_DATABASE=.*/DB_DATABASE=$PGDATABASE/" .env\n\
-    sed -i "s/DB_USERNAME=.*/DB_USERNAME=$PGUSER/" .env\n\
-    sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$PGPASSWORD/" .env\n\
-    # Remove SQLite specific configs\n\
-    sed -i "/^DB_DATABASE=.*\\.sqlite/d" .env\n\
 else\n\
-    # Fallback to SQLite\n\
-    echo "No PostgreSQL config found, using SQLite..." >&2\n\
-    sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=sqlite/" .env\n\
-    # Remove PostgreSQL specific configs\n\
-    sed -i "/^DB_HOST=/d" .env\n\
-    sed -i "/^DB_PORT=/d" .env\n\
-    sed -i "/^DB_USERNAME=/d" .env\n\
-    sed -i "/^DB_PASSWORD=/d" .env\n\
-    sed -i "/^DATABASE_URL=/d" .env\n\
-    # Set SQLite database path\n\
-    if ! grep -q "DB_DATABASE=" .env; then\n\
-        echo "DB_DATABASE=/var/www/database/database.sqlite" >> .env\n\
-    else\n\
-        sed -i "s|DB_DATABASE=.*|DB_DATABASE=/var/www/database/database.sqlite|" .env\n\
-    fi\n\
+    echo ".env file already exists" >&2\n\
 fi\n\
 \n\
-# Set APP_URL if provided\n\
-if [ ! -z "$APP_URL" ]; then\n\
-    sed -i "s|APP_URL=.*|APP_URL=$APP_URL|" .env\n\
+# Ensure the .env file is readable\n\
+chmod 644 .env\n\
+chown www-data:www-data .env\n\
+\n\
+# Show current .env content for debugging\n\
+echo "=== Current .env file ===" >&2\n\
+cat .env >&2\n\
+echo "=========================" >&2\n\
+\n\
+# Generate APP_KEY if empty or missing\n\
+echo "Checking APP_KEY..." >&2\n\
+if ! grep -q "APP_KEY=base64:" .env; then\n\
+    echo "Generating new APP_KEY..." >&2\n\
+    php artisan key:generate --force --no-interaction\n\
+    echo "APP_KEY generated successfully" >&2\n\
+else\n\
+    echo "APP_KEY already exists" >&2\n\
 fi\n\
 \n\
-# Generate key if not exists or empty\n\
-echo "Generating APP_KEY..." >&2\n\
-if ! grep -q "APP_KEY=" .env || [ "$(grep "APP_KEY=" .env | cut -d= -f2)" = "" ]; then\n\
-    php artisan key:generate --no-interaction --force\n\
-fi\n\
-\n\
-# Clear Laravel cache after env is properly configured\n\
+# Clear any existing cache before proceeding\n\
 echo "Clearing Laravel cache..." >&2\n\
-php artisan config:clear 2>/dev/null || true\n\
-php artisan cache:clear 2>/dev/null || true\n\
+php artisan cache:clear --no-interaction 2>/dev/null || echo "Cache clear failed (normal on first run)" >&2\n\
+php artisan config:clear --no-interaction 2>/dev/null || echo "Config clear failed (normal on first run)" >&2\n\
+php artisan route:clear --no-interaction 2>/dev/null || echo "Route clear failed (normal on first run)" >&2\n\
+php artisan view:clear --no-interaction 2>/dev/null || echo "View clear failed (normal on first run)" >&2\n\
 \n\
-# Debug: Show current database configuration\n\
-echo "=== Current configuration ===" >&2\n\
-cat .env | grep -E "(DB_|DATABASE_|APP_KEY|LOG_)" >&2\n\
+# Initialize SQLite database\n\
+echo "=== Initializing SQLite database ===" >&2\n\
 \n\
-# Initialize database if using SQLite\n\
-if grep -q "DB_CONNECTION=sqlite" .env; then\n\
-    echo "=== Initializing SQLite database ===" >&2\n\
-    # Ensure database file exists and has proper permissions\n\
-    touch /var/www/database/database.sqlite\n\
-    chmod 664 /var/www/database/database.sqlite\n\
-    chown www-data:www-data /var/www/database/database.sqlite\n\
-    # Run fresh migrations for SQLite\n\
-    echo "Running migrations..." >&2\n\
-    php artisan migrate:fresh --force --seed 2>&1 || {\n\
-        echo "Migration failed, trying regular migrate..." >&2\n\
-        php artisan migrate --force 2>&1 || {\n\
-            echo "Regular migrate also failed!" >&2\n\
-            exit 1\n\
-        }\n\
+# Ensure database directory exists\n\
+mkdir -p /var/www/database\n\
+\n\
+# Create or reset database file\n\
+touch /var/www/database/database.sqlite\n\
+chmod 664 /var/www/database/database.sqlite\n\
+chown www-data:www-data /var/www/database/database.sqlite\n\
+\n\
+# Initialize database with fresh migrations\n\
+echo "Running fresh migrations..." >&2\n\
+php artisan migrate:fresh --force --no-interaction --seed 2>&1 || {\n\
+    echo "Fresh migration failed, trying regular migrate..." >&2\n\
+    php artisan migrate --force --no-interaction 2>&1 || {\n\
+        echo "Regular migration also failed, trying to continue..." >&2\n\
     }\n\
-else\n\
-    # Test database connection for PostgreSQL\n\
-    echo "=== Testing PostgreSQL connection ===" >&2\n\
-    if php artisan migrate:status --no-interaction 2>/dev/null; then\n\
-        echo "Database connection successful, running migrations..." >&2\n\
-        php artisan migrate --force\n\
-    else\n\
-        echo "Database connection failed, check configuration" >&2\n\
-        exit 1\n\
-    fi\n\
-fi\n\
+}\n\
 \n\
-# Cache configuration\n\
+# Cache Laravel configurations after database is ready\n\
 echo "Caching Laravel configurations..." >&2\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
+php artisan config:cache --no-interaction\n\
+php artisan route:cache --no-interaction\n\
+php artisan view:cache --no-interaction\n\
 \n\
 # Create storage link\n\
 echo "Creating storage link..." >&2\n\
-php artisan storage:link\n\
+php artisan storage:link --no-interaction 2>/dev/null || echo "Storage link already exists" >&2\n\
 \n\
 echo "=== Laravel setup completed successfully ===" >&2\n\
 \n\
