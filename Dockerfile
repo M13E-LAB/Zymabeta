@@ -187,4 +187,7 @@ autorestart=true' > /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 80
 
-CMD ["/var/www/startup.sh"] 
+# Ensure the startup script is executable and test it
+RUN chmod +x /var/www/startup.sh && ls -la /var/www/startup.sh
+
+CMD ["bash", "/var/www/startup.sh"] 
