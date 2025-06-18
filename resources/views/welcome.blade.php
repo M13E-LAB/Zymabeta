@@ -119,12 +119,19 @@
         .powered-logo {
             width: 48px;
             height: 48px;
-            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .powered-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .powered-text {
@@ -279,7 +286,9 @@
         <!-- Contenu principal -->
         <div class="main-content">
             <div class="powered-by">
-                <div class="powered-logo">⚡</div>
+                <div class="powered-logo">
+                    <img src="{{ asset('images/etchelast-logo.jpg') }}" alt="Etchelast Logo">
+                </div>
                 <div>
                     <div class="powered-text">Powered by</div>
                     <div class="powered-name">ETCHELAST</div>
