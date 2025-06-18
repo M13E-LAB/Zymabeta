@@ -38,16 +38,7 @@ RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage \
     && chmod -R 755 /var/www/bootstrap/cache
 
-# Copy nginx configuration
-COPY docker/nginx.conf /etc/nginx/sites-available/default
-
-# Copy supervisor configuration
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Create docker directory and configurations
-RUN mkdir -p /var/www/docker
-
-# Create nginx config inline
+# Create nginx config
 RUN echo 'server {\n\
     listen 80;\n\
     index index.php index.html;\n\
@@ -63,7 +54,7 @@ RUN echo 'server {\n\
     }\n\
 }' > /etc/nginx/sites-available/default
 
-# Create supervisor config inline
+# Create supervisor config
 RUN echo '[supervisord]\n\
 nodaemon=true\n\
 [program:nginx]\n\
@@ -76,7 +67,8 @@ autostart=true\n\
 autorestart=true' > /etc/supervisor/conf.d/supervisord.conf
 
 # Laravel setup commands
-RUN php artisan config:cache \
+RUN php artisan key:generate --no-interaction \
+    && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
