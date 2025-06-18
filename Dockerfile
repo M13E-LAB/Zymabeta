@@ -190,4 +190,14 @@ EXPOSE 80
 # Ensure the startup script is executable and test it
 RUN chmod +x /var/www/startup.sh && ls -la /var/www/startup.sh
 
-CMD ["bash", "/var/www/startup.sh"] 
+# Create a wrapper script that forces our setup to run
+RUN echo '#!/bin/bash\n\
+echo "=== RENDER STARTUP WRAPPER ===" >&2\n\
+cd /var/www\n\
+\n\
+# Force our startup script to run first\n\
+echo "Executing custom startup script..." >&2\n\
+bash /var/www/startup.sh\n\
+' > /var/www/render-start.sh && chmod +x /var/www/render-start.sh
+
+CMD ["bash", "/var/www/render-start.sh"] 
