@@ -65,6 +65,10 @@ if [ ! -f .env ]; then\n\
     fi\n\
 fi\n\
 \n\
+# Clear Laravel cache first to avoid config conflicts\n\
+php artisan config:clear 2>/dev/null || true\n\
+php artisan cache:clear 2>/dev/null || true\n\
+\n\
 # Set production environment variables\n\
 sed -i "s/APP_ENV=local/APP_ENV=production/" .env\n\
 sed -i "s/APP_DEBUG=true/APP_DEBUG=false/" .env\n\
@@ -74,7 +78,11 @@ if [ ! -z "$DATABASE_URL" ]; then\n\
     # Parse DATABASE_URL for Render PostgreSQL\n\
     echo "DATABASE_URL found, configuring PostgreSQL..." >&2\n\
     sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env\n\
+    # Remove any existing DATABASE_URL line\n\
+    sed -i "/^DATABASE_URL=/d" .env\n\
     echo "DATABASE_URL=$DATABASE_URL" >> .env\n\
+    # Remove SQLite specific configs\n\
+    sed -i "/^DB_DATABASE=.*\\.sqlite/d" .env\n\
 elif [ ! -z "$PGHOST" ]; then\n\
     # Alternative PostgreSQL environment variables\n\
     echo "PostgreSQL environment variables found..." >&2\n\
@@ -84,11 +92,24 @@ elif [ ! -z "$PGHOST" ]; then\n\
     sed -i "s/DB_DATABASE=.*/DB_DATABASE=$PGDATABASE/" .env\n\
     sed -i "s/DB_USERNAME=.*/DB_USERNAME=$PGUSER/" .env\n\
     sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$PGPASSWORD/" .env\n\
+    # Remove SQLite specific configs\n\
+    sed -i "/^DB_DATABASE=.*\\.sqlite/d" .env\n\
 else\n\
     # Fallback to SQLite\n\
     echo "No PostgreSQL config found, using SQLite..." >&2\n\
     sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=sqlite/" .env\n\
-    sed -i "s/DB_DATABASE=.*/DB_DATABASE=\\/var\\/www\\/database\\/database.sqlite/" .env\n\
+    # Remove PostgreSQL specific configs\n\
+    sed -i "/^DB_HOST=/d" .env\n\
+    sed -i "/^DB_PORT=/d" .env\n\
+    sed -i "/^DB_USERNAME=/d" .env\n\
+    sed -i "/^DB_PASSWORD=/d" .env\n\
+    sed -i "/^DATABASE_URL=/d" .env\n\
+    # Set SQLite database path\n\
+    if ! grep -q "DB_DATABASE=" .env; then\n\
+        echo "DB_DATABASE=/var/www/database/database.sqlite" >> .env\n\
+    else\n\
+        sed -i "s|DB_DATABASE=.*|DB_DATABASE=/var/www/database/database.sqlite|" .env\n\
+    fi\n\
 fi\n\
 \n\
 # Set APP_URL if provided\n\
@@ -101,14 +122,17 @@ if ! grep -q "APP_KEY=" .env || [ "$(grep "APP_KEY=" .env | cut -d= -f2)" = "" ]
     php artisan key:generate --no-interaction --force\n\
 fi\n\
 \n\
+# Debug: Show current database configuration\n\
+echo "Current database configuration:" >&2\n\
+cat .env | grep -E "(DB_|DATABASE_)" >&2\n\
+\n\
 # Test database connection before migration\n\
 echo "Testing database connection..." >&2\n\
 if php artisan migrate:status --no-interaction 2>/dev/null; then\n\
     echo "Database connection successful, running migrations..." >&2\n\
     php artisan migrate --force\n\
 else\n\
-    echo "Database connection failed, check configuration" >&2\n\
-    cat .env | grep -E "(DB_|DATABASE_)" >&2\n\
+    echo "Database connection failed, attempting to continue..." >&2\n\
 fi\n\
 \n\
 # Cache configuration\n\
