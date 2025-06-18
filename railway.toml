@@ -1,0 +1,15 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+healthcheckPath = "/"
+restartPolicyType = "ON_FAILURE"
+
+[env]
+APP_NAME = "ZYMA"
+APP_ENV = "production"
+APP_DEBUG = "false"
+DB_CONNECTION = "sqlite"
+DB_DATABASE = "/app/database/database.sqlite"
+SESSION_DRIVER = "file"
+CACHE_DRIVER = "file" 
