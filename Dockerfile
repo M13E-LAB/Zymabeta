@@ -1,4 +1,4 @@
-FROM php:8.2-cli
+FROM php:8.2-apache
 
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
@@ -17,26 +17,42 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /app
+# Enable Apache modules
+RUN a2enmod rewrite
 
-# Copy ALL application files first (including artisan)
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy ALL application files
 COPY . .
 
-# Install PHP dependencies (now artisan exists)
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
-# Set permissions and create database
-RUN mkdir -p database storage/logs storage/framework/cache storage/framework/sessions storage/framework/views \
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 storage \
+    && chmod -R 755 bootstrap/cache \
+    && mkdir -p database \
     && touch database/database.sqlite \
-    && chmod -R 777 storage \
-    && chmod -R 777 bootstrap/cache \
     && chmod -R 777 database
 
-# Create CLEAN production startup script
+# Create startup script with dynamic port
 RUN echo '#!/bin/bash\n\
-cd /app\n\
-echo "🚀 ZYMA Starting..."\n\
+cd /var/www/html\n\
+echo "🚀 ZYMA Starting with Apache on port $PORT..."\n\
+\n\
+# Configure Apache for dynamic port\n\
+echo "Listen $PORT" > /etc/apache2/ports.conf\n\
+echo "<VirtualHost *:$PORT>" > /etc/apache2/sites-available/000-default.conf\n\
+echo "    DocumentRoot /var/www/html/public" >> /etc/apache2/sites-available/000-default.conf\n\
+echo "    <Directory /var/www/html/public>" >> /etc/apache2/sites-available/000-default.conf\n\
+echo "        AllowOverride All" >> /etc/apache2/sites-available/000-default.conf\n\
+echo "        Require all granted" >> /etc/apache2/sites-available/000-default.conf\n\
+echo "    </Directory>" >> /etc/apache2/sites-available/000-default.conf\n\
+echo "    ErrorLog /var/log/apache2/error.log" >> /etc/apache2/sites-available/000-default.conf\n\
+echo "    CustomLog /var/log/apache2/access.log combined" >> /etc/apache2/sites-available/000-default.conf\n\
+echo "</VirtualHost>" >> /etc/apache2/sites-available/000-default.conf\n\
 \n\
 # Create .env for production\n\
 cat > .env << EOF\n\
@@ -47,7 +63,7 @@ APP_DEBUG=false\n\
 APP_URL=https://zymabeta-production-6713.up.railway.app\n\
 \n\
 DB_CONNECTION=sqlite\n\
-DB_DATABASE=/app/database/database.sqlite\n\
+DB_DATABASE=/var/www/html/database/database.sqlite\n\
 \n\
 CACHE_DRIVER=file\n\
 SESSION_DRIVER=file\n\
@@ -57,20 +73,20 @@ LOG_CHANNEL=single\n\
 LOG_LEVEL=error\n\
 EOF\n\
 \n\
-# Silent setup\n\
+# Setup database and Laravel\n\
 touch database/database.sqlite\n\
 chmod 777 database/database.sqlite\n\
 php artisan migrate --force --no-interaction >/dev/null 2>&1 || true\n\
 php artisan config:clear >/dev/null 2>&1 || true\n\
 php artisan cache:clear >/dev/null 2>&1 || true\n\
 \n\
-echo "✅ Ready on port $PORT"\n\
+echo "✅ ZYMA Ready with Apache on port $PORT"\n\
 \n\
-# Start server - Keep server logs but not app debug\n\
-exec php -S 0.0.0.0:$PORT -t public/\n' > /start.sh \
+# Start Apache\n\
+exec apache2-foreground\n' > /start.sh \
     && chmod +x /start.sh
 
-# Expose port
+# Expose port (dynamic)
 EXPOSE $PORT
 
 # Start application
