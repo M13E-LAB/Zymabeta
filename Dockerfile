@@ -44,6 +44,7 @@ echo "🚀 ZYMA Starting with Apache on port $PORT..."\n\
 \n\
 # Configure Apache for dynamic port\n\
 echo "Listen $PORT" > /etc/apache2/ports.conf\n\
+echo "ServerName localhost" >> /etc/apache2/apache2.conf\n\
 echo "<VirtualHost *:$PORT>" > /etc/apache2/sites-available/000-default.conf\n\
 echo "    DocumentRoot /var/www/html/public" >> /etc/apache2/sites-available/000-default.conf\n\
 echo "    <Directory /var/www/html/public>" >> /etc/apache2/sites-available/000-default.conf\n\
