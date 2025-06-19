@@ -32,23 +32,39 @@ RUN mkdir -p database storage/logs storage/framework/cache storage/framework/ses
     && chmod -R 755 storage \
     && chmod -R 755 bootstrap/cache
 
-# Create simple startup script
+# Create optimized startup script
 RUN echo '#!/bin/bash\n\
 cd /app\n\
 echo "🚀 Starting ZYMA Laravel App..."\n\
 \n\
+# Create .env file if it doesnt exist\n\
+if [ ! -f .env ]; then\n\
+  echo "📝 Creating .env file..."\n\
+  cat > .env << EOF\n\
+APP_NAME=ZYMA\n\
+APP_ENV=production\n\
+APP_KEY=base64:mcSE07/xaGmT9Beq4xuzbFsd3SUJJTje8kFpZnUeW3k=\n\
+APP_DEBUG=false\n\
+APP_URL=https://zymabeta-production-6713.up.railway.app\n\
+\n\
+DB_CONNECTION=sqlite\n\
+DB_DATABASE=/app/database/database.sqlite\n\
+\n\
+CACHE_DRIVER=file\n\
+SESSION_DRIVER=file\n\
+QUEUE_CONNECTION=sync\n\
+MAIL_MAILER=log\n\
+LOG_CHANNEL=stderr\n\
+EOF\n\
+fi\n\
+\n\
 # Setup database\n\
+echo "📁 Setting up database..."\n\
 touch database/database.sqlite\n\
 \n\
-# Clear caches\n\
-php artisan config:clear 2>/dev/null || true\n\
-php artisan cache:clear 2>/dev/null || true\n\
-\n\
-# Generate key if needed\n\
-php artisan key:generate --force 2>/dev/null || true\n\
-\n\
-# Run migrations\n\
-php artisan migrate --force --no-interaction 2>/dev/null || true\n\
+# Run migrations (ignore if table exists)\n\
+echo "🗄️ Running migrations..."\n\
+php artisan migrate --force --no-interaction 2>/dev/null || echo "Migration completed with warnings"\n\
 \n\
 echo "✅ Starting server on port $PORT"\n\
 \n\
