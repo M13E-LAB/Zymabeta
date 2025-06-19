@@ -20,14 +20,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy composer files first (for better caching)
-COPY composer.json composer.lock ./
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# Copy application files
+# Copy ALL application files first (including artisan)
 COPY . .
+
+# Install PHP dependencies (now artisan exists)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Set permissions and create database
 RUN mkdir -p database storage/logs storage/framework/cache storage/framework/sessions storage/framework/views \
