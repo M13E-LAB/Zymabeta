@@ -84,11 +84,18 @@ echo "🔍 Testing basic Laravel..."\n\
 php -r "echo \"PHP version: \" . PHP_VERSION . \"\\n\";"\n\
 php -r "require \"vendor/autoload.php\"; echo \"Autoload OK\\n\";"\n\
 \n\
+# Test Laravel bootstrap\n\
+echo "🔧 Testing Laravel bootstrap..."\n\
+cd public\n\
+php -r "try { require \"index.php\"; echo \"Laravel bootstrap: OK\\n\"; } catch (Exception \\$e) { echo \"Laravel bootstrap ERROR: \" . \\$e->getMessage() . \"\\n\"; }"\n\
+cd ..\n\
+\n\
 echo "✅ Starting server on port $PORT"\n\
 echo "📊 Server will be available at: http://0.0.0.0:$PORT"\n\
+echo "🧪 Test simple PHP: http://0.0.0.0:$PORT/test.php"\n\
 \n\
-# Start server with verbose output\n\
-exec php -S 0.0.0.0:$PORT -t public/ public/index.php\n' > /start.sh \
+# Start server with error reporting\n\
+exec php -d display_errors=1 -d error_reporting=E_ALL -S 0.0.0.0:$PORT -t public/\n' > /start.sh \
     && chmod +x /start.sh
 
 # Expose port
