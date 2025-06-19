@@ -8,6 +8,7 @@ CACHE_DRIVER = "file"
 SESSION_DRIVER = "file"
 QUEUE_CONNECTION = "sync"
 MAIL_MAILER = "log"
+APP_KEY = "base64:mcSE07/xaGmT9Beq4xuzbFsd3SUJJTje8kFpZnUeW3k="
 
 # Empty variables to prevent warnings
 DATABASE_URL = ""
@@ -31,14 +32,13 @@ MEMCACHED_PASSWORD = ""
 cmds = [
   "mkdir -p database",
   "touch database/database.sqlite",
-  "php artisan key:generate --force",
-  "php artisan migrate --force",
-  "php artisan config:cache",
-  "php artisan route:cache"
+  "php artisan migrate --force --no-interaction",
+  "php artisan config:clear",
+  "php artisan cache:clear"
 ]
 
 [phases.install]
-cmds = ["composer install --no-dev --optimize-autoloader"]
+cmds = ["composer install --no-dev --optimize-autoloader --no-interaction"]
 
 [start]
-cmd = "php artisan serve --host=0.0.0.0 --port=$PORT" 
+cmd = "php -S 0.0.0.0:$PORT -t public/ public/index.php" 

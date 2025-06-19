@@ -1,30 +1,20 @@
 #!/bin/bash
 
-echo "🚀 Démarrage de ZYMA..."
+echo "🚀 Starting ZYMA Laravel App..."
 
-# Attendre que MySQL soit disponible
-echo "⏳ Vérification de la base de données..."
-php artisan tinker --execute="DB::connection()->getPdo();" > /dev/null 2>&1
-while [ $? -ne 0 ]; do
-  echo "⏳ En attente de MySQL..."
-  sleep 2
-  php artisan tinker --execute="DB::connection()->getPdo();" > /dev/null 2>&1
-done
+# Create database if needed
+mkdir -p database
+touch database/database.sqlite
 
-echo "✅ Base de données connectée"
+# Clear caches
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
 
-# Exécuter les migrations
-echo "🗄️ Exécution des migrations..."
-php artisan migrate --force
+# Run migrations
+php artisan migrate --force --no-interaction
 
-# Créer le lien symbolique pour le storage
-echo "📁 Configuration du stockage..."
-php artisan storage:link
+echo "✅ Setup complete, starting server..."
 
-# Nettoyer le cache si nécessaire
-echo "🧹 Nettoyage du cache..."
-php artisan cache:clear || true
-php artisan config:clear || true
-
-echo "✅ Démarrage du serveur Laravel..."
-php artisan serve --host=0.0.0.0 --port=${PORT:-8000} 
+# Start PHP server
+exec php -S 0.0.0.0:$PORT -t public/ 
