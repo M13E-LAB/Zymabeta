@@ -43,60 +43,93 @@ RUN mkdir -p /var/www/storage/logs \
     && chmod -R 755 /var/www/bootstrap/cache \
     && chmod 664 /var/www/database/database.sqlite
 
-# Create startup script for Railway
-RUN echo '#!/bin/bash\n\
-set -e\n\
-cd /var/www\n\
-\n\
-echo "🚀 Starting ZYMA on Railway..."\n\
-\n\
-# Create .env if not exists\n\
-if [ ! -f .env ]; then\n\
-    echo "Creating .env file..."\n\
-    cat > .env << EOF\n\
-APP_NAME=ZYMA\n\
-APP_ENV=production\n\
-APP_KEY=\n\
-APP_DEBUG=false\n\
-APP_URL=${APP_URL:-https://zymabeta.up.railway.app}\n\
-\n\
-LOG_CHANNEL=stderr\n\
-LOG_LEVEL=info\n\
-\n\
-DB_CONNECTION=sqlite\n\
-DB_DATABASE=/var/www/database/database.sqlite\n\
-\n\
-CACHE_STORE=file\n\
-SESSION_DRIVER=file\n\
-QUEUE_CONNECTION=sync\n\
-\n\
-MAIL_MAILER=log\n\
-EOF\n\
-fi\n\
-\n\
-# Generate APP_KEY if needed\n\
-if ! grep -q "APP_KEY=base64:" .env; then\n\
-    php artisan key:generate --force\n\
-fi\n\
-\n\
-# Clear caches\n\
-php artisan cache:clear\n\
-php artisan config:clear\n\
-\n\
-# Setup database\n\
-php artisan migrate:fresh --force --seed || php artisan migrate --force\n\
-\n\
-# Cache for production\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
-\n\
-echo "✅ ZYMA ready on Railway!"\n\
-\n\
-# Start server\n\
-exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}\n\
-' > /var/www/railway-start.sh && chmod +x /var/www/railway-start.sh
+# Create comprehensive startup script for Railway
+RUN echo '#!/bin/bash' > /var/www/railway-start.sh
+RUN echo 'set -e' >> /var/www/railway-start.sh
+RUN echo 'cd /var/www' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'echo "🚀 Starting ZYMA on Railway..."' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# Create comprehensive .env file' >> /var/www/railway-start.sh
+RUN echo 'if [ ! -f .env ]; then' >> /var/www/railway-start.sh
+RUN echo '    echo "📝 Creating complete .env file..."' >> /var/www/railway-start.sh
+RUN echo '    cat > .env << EOF' >> /var/www/railway-start.sh
+RUN echo 'APP_NAME=ZYMA' >> /var/www/railway-start.sh
+RUN echo 'APP_ENV=production' >> /var/www/railway-start.sh
+RUN echo 'APP_KEY=' >> /var/www/railway-start.sh
+RUN echo 'APP_DEBUG=false' >> /var/www/railway-start.sh
+RUN echo 'APP_URL=${RAILWAY_PUBLIC_DOMAIN:-https://zymabeta-production-b78c.up.railway.app}' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'LOG_CHANNEL=stderr' >> /var/www/railway-start.sh
+RUN echo 'LOG_LEVEL=info' >> /var/www/railway-start.sh
+RUN echo 'LOG_STDERR_FORMATTER=' >> /var/www/railway-start.sh
+RUN echo 'LOG_SLACK_WEBHOOK_URL=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'DB_CONNECTION=sqlite' >> /var/www/railway-start.sh
+RUN echo 'DB_DATABASE=/var/www/database/database.sqlite' >> /var/www/railway-start.sh
+RUN echo 'DB_QUEUE_CONNECTION=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'CACHE_STORE=file' >> /var/www/railway-start.sh
+RUN echo 'SESSION_DRIVER=file' >> /var/www/railway-start.sh
+RUN echo 'SESSION_CONNECTION=' >> /var/www/railway-start.sh
+RUN echo 'SESSION_STORE=' >> /var/www/railway-start.sh
+RUN echo 'SESSION_DOMAIN=' >> /var/www/railway-start.sh
+RUN echo 'SESSION_SECURE_COOKIE=' >> /var/www/railway-start.sh
+RUN echo 'QUEUE_CONNECTION=sync' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'MAIL_MAILER=log' >> /var/www/railway-start.sh
+RUN echo 'MAIL_URL=' >> /var/www/railway-start.sh
+RUN echo 'MAIL_USERNAME=' >> /var/www/railway-start.sh
+RUN echo 'MAIL_PASSWORD=' >> /var/www/railway-start.sh
+RUN echo 'POSTMARK_TOKEN=' >> /var/www/railway-start.sh
+RUN echo 'POSTMARK_MESSAGE_STREAM_ID=' >> /var/www/railway-start.sh
+RUN echo 'RESEND_KEY=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'REDIS_URL=' >> /var/www/railway-start.sh
+RUN echo 'REDIS_USERNAME=' >> /var/www/railway-start.sh
+RUN echo 'REDIS_PASSWORD=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'AWS_ACCESS_KEY_ID=' >> /var/www/railway-start.sh
+RUN echo 'AWS_SECRET_ACCESS_KEY=' >> /var/www/railway-start.sh
+RUN echo 'SQS_SUFFIX=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'SLACK_BOT_USER_OAUTH_TOKEN=' >> /var/www/railway-start.sh
+RUN echo 'SLACK_BOT_USER_DEFAULT_CHANNEL=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'PAPERTRAIL_URL=' >> /var/www/railway-start.sh
+RUN echo 'PAPERTRAIL_PORT=' >> /var/www/railway-start.sh
+RUN echo 'EOF' >> /var/www/railway-start.sh
+RUN echo 'fi' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# Generate APP_KEY if needed' >> /var/www/railway-start.sh
+RUN echo 'if ! grep -q "APP_KEY=base64:" .env; then' >> /var/www/railway-start.sh
+RUN echo '    echo "🔑 Generating APP_KEY..."' >> /var/www/railway-start.sh
+RUN echo '    php artisan key:generate --force' >> /var/www/railway-start.sh
+RUN echo 'fi' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# Clear caches' >> /var/www/railway-start.sh
+RUN echo 'echo "🧹 Clearing caches..."' >> /var/www/railway-start.sh
+RUN echo 'php artisan cache:clear' >> /var/www/railway-start.sh
+RUN echo 'php artisan config:clear' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# Setup database' >> /var/www/railway-start.sh
+RUN echo 'echo "🗄️ Setting up database..."' >> /var/www/railway-start.sh
+RUN echo 'php artisan migrate:fresh --force --seed || php artisan migrate --force' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# Cache for production' >> /var/www/railway-start.sh
+RUN echo 'echo "⚡ Caching configurations..."' >> /var/www/railway-start.sh
+RUN echo 'php artisan config:cache' >> /var/www/railway-start.sh
+RUN echo 'php artisan route:cache' >> /var/www/railway-start.sh
+RUN echo 'php artisan view:cache' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo 'echo "✅ ZYMA ready on Railway!"' >> /var/www/railway-start.sh
+RUN echo 'echo "🌐 Port: ${PORT:-8000}"' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# Start server on Railway PORT' >> /var/www/railway-start.sh
+RUN echo 'exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}' >> /var/www/railway-start.sh
 
-EXPOSE 8000
+RUN chmod +x /var/www/railway-start.sh
+
+EXPOSE ${PORT:-8000}
 
 CMD ["/var/www/railway-start.sh"] 
