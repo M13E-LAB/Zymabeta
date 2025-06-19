@@ -98,6 +98,20 @@ RUN echo 'SLACK_BOT_USER_DEFAULT_CHANNEL=' >> /var/www/railway-start.sh
 RUN echo '' >> /var/www/railway-start.sh
 RUN echo 'PAPERTRAIL_URL=' >> /var/www/railway-start.sh
 RUN echo 'PAPERTRAIL_PORT=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# AWS Configuration' >> /var/www/railway-start.sh
+RUN echo 'AWS_DEFAULT_REGION=' >> /var/www/railway-start.sh
+RUN echo 'AWS_BUCKET=' >> /var/www/railway-start.sh
+RUN echo 'AWS_URL=' >> /var/www/railway-start.sh
+RUN echo 'AWS_ENDPOINT=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# Database Additional' >> /var/www/railway-start.sh
+RUN echo 'DATABASE_URL=' >> /var/www/railway-start.sh
+RUN echo 'DB_URL=' >> /var/www/railway-start.sh
+RUN echo 'MYSQL_ATTR_SSL_CA=' >> /var/www/railway-start.sh
+RUN echo '' >> /var/www/railway-start.sh
+RUN echo '# Mail Additional' >> /var/www/railway-start.sh
+RUN echo 'MAIL_LOG_CHANNEL=' >> /var/www/railway-start.sh
 RUN echo 'EOF' >> /var/www/railway-start.sh
 RUN echo 'fi' >> /var/www/railway-start.sh
 RUN echo '' >> /var/www/railway-start.sh
