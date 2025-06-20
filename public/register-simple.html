@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Inscription Simple</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #000; 
+            color: #fff; 
+            padding: 20px; 
+            max-width: 500px; 
+            margin: 0 auto; 
+        }
+        input, button { 
+            width: 100%; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: 1px solid #333; 
+            background: #222; 
+            color: #fff; 
+            border-radius: 8px; 
+        }
+        button { 
+            background: #007AFF; 
+            cursor: pointer; 
+            border: none; 
+        }
+        .success { 
+            background: #28a745; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 10px 0; 
+        }
+        .error { 
+            background: #dc3545; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 10px 0; 
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 TEST INSCRIPTION SIMPLE</h1>
+    
+    <form action="/test-register.php" method="POST">
+        <input type="text" name="name" placeholder="Nom complet" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Mot de passe (8+ caractères)" required minlength="8">
+        <button type="submit">✅ CRÉER COMPTE TEST</button>
+    </form>
+    
+    <div style="margin-top: 30px; padding: 15px; background: #333; border-radius: 8px;">
+        <h3>🎯 ALTERNATIVE TEMPORAIRE :</h3>
+        <p>Si ce test marche, on saura que le problème vient de Safari + Laravel.</p>
+        <a href="/register" style="color: #007AFF;">↩️ Retour au formulaire Laravel</a>
+    </div>
+    
+    <script>
+        // Test de détection Safari
+        if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
+            console.log('🍎 Safari détecté - Problème HTTPS probable');
+            document.body.insertAdjacentHTML('afterbegin', 
+                '<div class="error">🍎 Safari détecté ! Clic sur "Send" dans la popup de sécurité pour continuer.</div>'
+            );
+        }
+    </script>
+</body>
+</html> 
