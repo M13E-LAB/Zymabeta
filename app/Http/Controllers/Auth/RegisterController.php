@@ -82,7 +82,7 @@ class RegisterController extends Controller
         ]);
 
         // Attribution de points de bienvenue
-        PointTransaction::awardPoints($user->id, 'registration', 'Inscription sur ZYMA');
+        PointTransaction::awardPoints($user->id, 'register', 'Inscription sur ZYMA');
 
         return $user;
     }
