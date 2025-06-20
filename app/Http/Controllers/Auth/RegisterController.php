@@ -81,8 +81,12 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        // Attribution de points de bienvenue
-        PointTransaction::awardPoints($user->id, 'register', 'Inscription sur ZYMA');
+        // Attribution de points de bienvenue - TEMPORAIREMENT DÉSACTIVÉ POUR DEBUG
+        try {
+            PointTransaction::awardPoints($user->id, 'register', 'Inscription sur ZYMA');
+        } catch (\Exception $e) {
+            \Log::error('Erreur points registration: ' . $e->getMessage());
+        }
 
         return $user;
     }

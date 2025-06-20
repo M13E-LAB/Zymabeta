@@ -292,6 +292,23 @@
         <div class="register-form">
             <h2 class="form-title">Créer un compte</h2>
 
+            @if ($errors->any())
+                <div style="background: rgba(255, 59, 48, 0.1); border: 1px solid #FF3B30; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                    <h4 style="color: #FF3B30; margin-bottom: 8px;">❌ Erreurs détectées :</h4>
+                    <ul style="color: #FF3B30; margin: 0; padding-left: 20px;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div style="background: rgba(255, 59, 48, 0.1); border: 1px solid #FF3B30; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                    <p style="color: #FF3B30; margin: 0;">❌ {{ session('error') }}</p>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('register') }}" id="registerForm">
                         @csrf
                         
