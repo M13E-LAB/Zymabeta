@@ -427,19 +427,50 @@
         
         // Gestion du formulaire d'inscription
         document.getElementById('registerForm').addEventListener('submit', function(e) {
-            const registerBtn = document.getElementById('registerBtn');
-            const btnText = registerBtn.querySelector('.btn-text');
-            const loading = registerBtn.querySelector('.loading');
+            console.log('🔍 Formulaire soumis');
             
-            // Afficher l'état de chargement
+            const btn = document.getElementById('registerBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const loading = btn.querySelector('.loading');
+            
+            // Validation basique
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('password_confirmation').value;
+            const terms = document.getElementById('terms').checked;
+            
+            console.log('📋 Données:', { name, email, password: '***', passwordConfirm: '***', terms });
+            
+            if (!name || !email || !password || !passwordConfirm || !terms) {
+                e.preventDefault();
+                alert('❌ Veuillez remplir tous les champs et accepter les conditions');
+                return false;
+            }
+            
+            if (password !== passwordConfirm) {
+                e.preventDefault();
+                alert('❌ Les mots de passe ne correspondent pas');
+                return false;
+            }
+            
+            if (password.length < 8) {
+                e.preventDefault();
+                alert('❌ Le mot de passe doit contenir au moins 8 caractères');
+                return false;
+            }
+            
+            console.log('✅ Validation OK, envoi...');
+            
+            // Afficher le loading
             btnText.style.display = 'none';
             loading.style.display = 'flex';
-            registerBtn.disabled = true;
+            btn.disabled = true;
             
-            // Feedback haptique
-            if (navigator.vibrate) {
-                navigator.vibrate(100);
-            }
+            // Debug: ajouter un délai pour voir le loading
+            setTimeout(() => {
+                console.log('📤 Envoi du formulaire...');
+            }, 100);
         });
 
         // Animation du bouton
