@@ -24,9 +24,8 @@ class AdminMiddleware
         $user = Auth::user();
 
         // Vérifier si l'utilisateur est un administrateur
-        // Pour l'instant, on considère les premiers utilisateurs comme admins
-        // ou on peut ajouter un champ 'is_admin' à la table users
-        if ($user->id <= 3 || $user->email === 'admin@zyma.app' || $user->points >= 1000) {
+        // Seul l'email spécifique est autorisé comme admin
+        if ($user->email === 'mohamedanouar.essakhi@skema.edu') {
             return $next($request);
         }
 
