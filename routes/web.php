@@ -9,10 +9,16 @@ use App\Http\Controllers\BetaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// Page d'accueil principale - Landing page ZYMA
+// Page d'accueil principale - Landing page ZYMA avec redirection pour utilisateurs connectés
 Route::get('/', function () {
+    // Si l'utilisateur est connecté, le rediriger vers son dashboard
+    if (Auth::check()) {
+        return redirect()->route('home');
+    }
+    
+    // Sinon afficher la landing page
     return view('welcome');
-})->name('home');
+})->name('landing');
 
 // Routes de test rapide
 Route::get('/test', function () {
@@ -79,6 +85,9 @@ Route::post('/beta/verify', [BetaController::class, 'verifyCode'])->name('beta.v
 
 // Routes d'authentification
 Auth::routes();
+
+// Dashboard principal des utilisateurs connectés
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Dashboard après connexion
 Route::get('/dashboard', function () {
