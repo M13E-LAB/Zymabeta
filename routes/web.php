@@ -6,6 +6,7 @@ use App\Http\Controllers\SocialFeedController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\BetaController;
+use App\Http\Controllers\AnalyticsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -192,3 +193,37 @@ Route::post('/beta/verify', [App\Http\Controllers\BetaController::class, 'verify
 Route::get('/beta/dashboard', [App\Http\Controllers\BetaController::class, 'dashboard'])->name('beta.dashboard')->middleware('auth');
 Route::get('/beta/codes', [App\Http\Controllers\BetaController::class, 'listCodes'])->name('beta.codes')->middleware('auth');
 Route::post('/beta/generate', [App\Http\Controllers\BetaController::class, 'generateCodes'])->name('beta.generate')->middleware('auth');
+
+// Routes Analytics - Dashboard d'analyse des données utilisateur
+Route::middleware(['auth'])->prefix('analytics')->name('analytics.')->group(function () {
+    // Dashboard principal d'analytics
+    Route::get('/', [App\Http\Controllers\AnalyticsController::class, 'index'])->name('dashboard');
+    
+    // Export des données utilisateur en CSV
+    Route::get('/export/users', [App\Http\Controllers\AnalyticsController::class, 'exportUsers'])->name('export-users');
+    
+    // Détails d'un utilisateur spécifique
+    Route::get('/user/{id}', [App\Http\Controllers\AnalyticsController::class, 'userDetails'])->name('user-details');
+    
+    // API pour stats en temps réel
+    Route::get('/api/stats', [App\Http\Controllers\AnalyticsController::class, 'apiStats'])->name('api.stats');
+});
+
+// Routes pour le système d'analytics (accès restreint aux admins)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.dashboard');
+    Route::get('/analytics/export/users', [AnalyticsController::class, 'exportUsers'])->name('analytics.export.users');
+    Route::get('/analytics/user/{id}', [AnalyticsController::class, 'userDetails'])->name('analytics.user.details');
+});
+
+// API endpoint pour les statistiques en temps réel (accès restreint aux admins)
+Route::middleware(['auth', 'admin'])->get('/analytics/api/stats', [AnalyticsController::class, 'apiStats'])->name('analytics.api.stats');
+
+// Routes pour le système de test beta (accès restreint aux admins)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/beta', [BetaController::class, 'welcome'])->name('beta.welcome');
+    Route::post('/beta/verify', [BetaController::class, 'verify'])->name('beta.verify');
+    Route::get('/beta/dashboard', [BetaController::class, 'dashboard'])->name('beta.dashboard');
+    Route::get('/beta/codes', [BetaController::class, 'codes'])->name('beta.codes');
+    Route::post('/beta/generate', [BetaController::class, 'generate'])->name('beta.generate');
+});

@@ -1030,6 +1030,11 @@
                             <li><a class="dropdown-item" href="{{ route('leaderboard.global') }}"><i class="fas fa-list-ol me-2"></i> Classement global</a></li>
                             <li><a class="dropdown-item" href="{{ route('leagues.index') }}"><i class="fas fa-trophy me-2"></i> Mes ligues</a></li>
                             <li><a class="dropdown-item" href="{{ route('social.feed') }}"><i class="fas fa-stream me-2"></i> Feed social</a></li>
+                            @if(auth()->check() && (auth()->user()->id <= 3 || auth()->user()->email === 'admin@zyma.app' || auth()->user()->points >= 1000))
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('analytics.dashboard') }}"><i class="fas fa-chart-bar me-2"></i> Analytics Admin</a></li>
+                            <li><a class="dropdown-item" href="{{ route('beta.dashboard') }}"><i class="fas fa-flask me-2"></i> Gestion Beta</a></li>
+                            @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">
