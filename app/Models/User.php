@@ -92,6 +92,61 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the leagues created by the user.
+     */
+    public function createdLeagues()
+    {
+        return $this->hasMany(League::class, 'created_by');
+    }
+
+    /**
+     * Get the leagues the user is a member of.
+     */
+    public function leagues()
+    {
+        return $this->belongsToMany(League::class, 'league_members')
+            ->using(LeagueMember::class)
+            ->withPivot('weekly_score', 'monthly_score', 'total_score', 'position', 'role', 'last_score_update')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the user's meal scores through their posts.
+     */
+    public function mealScores()
+    {
+        return $this->hasManyThrough(MealScore::class, Post::class)
+            ->whereHas('post', function ($query) {
+                $query->where('post_type', 'meal');
+            });
+    }
+
+    /**
+     * Get the average meal score for the user.
+     */
+    public function getAverageMealScoreAttribute()
+    {
+        $scores = $this->mealScores()->pluck('total_score');
+        
+        if ($scores->isEmpty()) {
+            return 0;
+        }
+        
+        return round($scores->avg());
+    }
+
+    /**
+     * Get the user's position in the global leaderboard.
+     */
+    public function getGlobalRankAttribute()
+    {
+        $higherScoreCount = User::where('points', '>', $this->points)->count();
+        
+        // Position = nombre d'utilisateurs avec un meilleur score + 1
+        return $higherScoreCount + 1;
+    }
+
+    /**
      * Get the user's level title.
      */
     public function getLevelTitleAttribute()

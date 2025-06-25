@@ -85,10 +85,10 @@
         }
         
         .avatar-small {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+            width: 40px !important;
+            height: 40px !important;
             object-fit: cover;
+            border-radius: 50%;
         }
         
         .dropdown-menu {
@@ -218,17 +218,18 @@
         }
 
         .product-image {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 16px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: block;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-
+        
         .product-image img {
-            max-width: 100%;
+            width: 100%;
             height: auto;
-            border-radius: 12px;
+            max-height: 400px;
+            object-fit: cover;
         }
 
         .product-details {
@@ -437,6 +438,35 @@
         .autocomplete-item:last-child {
             border-bottom: none;
         }
+
+        /* Styles pour contrôler la taille des images partagées */
+        .post-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .post-image {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+        }
+        
+        /* Style pour les avatars dans les commentaires et les listes */
+        .author-avatar {
+            width: 36px;
+            height: 36px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        /* Hauteur maximale pour les grandes photos dans les cards */
+        .card-img-top {
+            max-height: 400px;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -457,11 +487,11 @@
                     <div class="autocomplete-results" id="autocompleteResults"></div>
                 </form>
                 
-                <a href="{{ route('statistics') }}" class="nav-link">
-                    <i class="fas fa-chart-bar"></i> Statistiques
-                </a>
                 <a href="{{ route('social.feed') }}" class="nav-link">
                     <i class="fas fa-stream"></i> Communauté
+                </a>
+                <a href="{{ route('leagues.index') }}" class="nav-link">
+                    <i class="fas fa-trophy"></i> Ligues
                 </a>
             </div>
             

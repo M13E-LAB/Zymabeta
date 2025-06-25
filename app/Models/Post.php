@@ -90,6 +90,46 @@ class Post extends Model
     }
 
     /**
+     * Get the meal score for the post.
+     */
+    public function mealScore()
+    {
+        return $this->hasOne(MealScore::class);
+    }
+
+    /**
+     * Check if the post has a meal score.
+     */
+    public function hasScore()
+    {
+        return $this->mealScore()->exists();
+    }
+
+    /**
+     * Get a color code representing the meal score quality.
+     */
+    public function getScoreColorAttribute()
+    {
+        if (!$this->hasScore()) {
+            return 'gray';
+        }
+        
+        $score = $this->mealScore->total_score;
+        
+        if ($score >= 90) {
+            return 'green-600';
+        } elseif ($score >= 75) {
+            return 'green-500';
+        } elseif ($score >= 60) {
+            return 'yellow-500';
+        } elseif ($score >= 40) {
+            return 'orange-500';
+        } else {
+            return 'red-500';
+        }
+    }
+
+    /**
      * Check if the post is expired.
      */
     public function getIsExpiredAttribute()
