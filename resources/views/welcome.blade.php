@@ -306,9 +306,6 @@
                 révolutionne votre façon de manger sainement.
             </p>
 
-            <a href="{{ route('products.search') }}" class="cta-button">
-                🔍 Recherche Avancée
-            </a>
 
             <p class="feature-text">
                 Découvrez, comparez et partagez vos trouvailles nutrition
