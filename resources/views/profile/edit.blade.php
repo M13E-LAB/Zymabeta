@@ -299,9 +299,6 @@
         <nav class="bottom-nav">
             <a href="{{ route('home') }}" class="bottom-nav-item">
                 <div class="bottom-nav-icon">🔍</div>
-                <div class="bottom-nav-label">Découvrir</div>
-            </a>
-            <a href="{{ route('social.feed') }}" class="bottom-nav-item">
                 <div class="bottom-nav-icon">📱</div>
                 <div class="bottom-nav-label">Communauté</div>
             </a>
