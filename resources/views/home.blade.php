@@ -373,8 +373,8 @@
                 <div class="bottom-nav-label">Ligues</div>
             </a>
             <a href="{{ route('profile.show') }}" class="bottom-nav-item">
-                <div class="bottom-nav-icon">🔎</div>
-                <div class="bottom-nav-label">Recherche avancée</div>
+                <div class="bottom-nav-icon">👤</div>
+                <div class="bottom-nav-label">Profil</div>
             </a>
         </nav>
     </div>
