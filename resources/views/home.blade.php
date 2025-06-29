@@ -335,21 +335,13 @@
         <section class="actions-section">
             <h2 class="section-title">Actions rapides</h2>
             <div class="actions-grid">
-                <a href="{{ route('social.create') }}" class="action-btn">
-                    <div class="action-icon">📸</div>
-                    <div class="action-label">Partager</div>
-                </a>
-                <a href="{{ route('products.search') }}" class="action-btn">
+                <a href="/receipts/scan" class="action-btn">
                     <div class="action-icon">🔍</div>
                     <div class="action-label">Scanner</div>
                 </a>
                 <a href="{{ route('products.search') }}" class="action-btn">
                     <div class="action-icon">🔎</div>
                     <div class="action-label">Recherche avancée</div>
-                </a>
-                <a href="{{ route('profile.show') }}" class="action-btn">
-                    <div class="action-icon">👤</div>
-                    <div class="action-label">Profil</div>
                 </a>
             </div>
         </section>
@@ -381,8 +373,8 @@
                 <div class="bottom-nav-label">Ligues</div>
             </a>
             <a href="{{ route('profile.show') }}" class="bottom-nav-item">
-                <div class="bottom-nav-icon">👤</div>
-                <div class="bottom-nav-label">Profil</div>
+                <div class="bottom-nav-icon">🔎</div>
+                <div class="bottom-nav-label">Recherche avancée</div>
             </a>
         </nav>
     </div>
