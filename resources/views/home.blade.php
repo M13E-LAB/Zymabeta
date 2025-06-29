@@ -335,10 +335,6 @@
         <section class="actions-section">
             <h2 class="section-title">Actions rapides</h2>
             <div class="actions-grid">
-                <a href="/receipts/scan" class="action-btn">
-                    <div class="action-icon">🔍</div>
-                    <div class="action-label">Scanner</div>
-                </a>
                 <a href="{{ route('products.search') }}" class="action-btn">
                     <div class="action-icon">🔎</div>
                     <div class="action-label">Recherche avancée</div>
