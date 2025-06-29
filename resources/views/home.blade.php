@@ -442,3 +442,4 @@
     </script>
 </body>
 </html>
+// ✨ UX optimisée mobile
