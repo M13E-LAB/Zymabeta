@@ -445,3 +445,4 @@
 // ✨ UX optimisée mobile
 /* 📱 Optimisé pour iPhone */
 /* 🔧 Actions mobile fix */
+/* 🔥 Ultra compact mobile fix */
