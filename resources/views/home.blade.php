@@ -444,3 +444,4 @@
 </html>
 // ✨ UX optimisée mobile
 /* 📱 Optimisé pour iPhone */
+/* 🔧 Actions mobile fix */
