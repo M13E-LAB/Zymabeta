@@ -325,46 +325,6 @@
         </section>
 
         <!-- Main Features -->
-        <section class="features-section">
-            <a href="{{ route('social.feed') }}" class="feature-card">
-                <div class="feature-content">
-                    <div class="feature-icon">📱</div>
-                    <div class="feature-info">
-                        <div class="feature-title">Feed social nutrition</div>
-                        <div class="feature-description">Partagez vos découvertes et suivez les trouvailles de la communauté</div>
-                    </div>
-                    <div class="feature-arrow">›</div>
-                </div>
-            </a>
-
-            <a href="{{ route('leagues.index') }}" class="feature-card">
-                <div class="feature-content">
-                    <div class="feature-icon">🏆</div>
-                    <div class="feature-info">
-                        <div class="feature-title">Ligues entre amis</div>
-                        <div class="feature-description">Défiez vos amis dans des compétitions nutrition</div>
-                    </div>
-                    <div class="feature-arrow">›</div>
-                </div>
-            </a>
-
-            <a href="{{ route('products.search') }}" class="feature-card">
-                <div class="feature-content">
-                    <div class="feature-icon">🔍</div>
-                    <div class="feature-info">
-                        <div class="feature-title">Scanner produits</div>
-                        <div class="feature-description">Analysez instantanément la qualité nutritionnelle</div>
-                    </div>
-                    <div class="feature-arrow">›</div>
-                </div>
-            </a>
-
-            <a href="#" class="feature-card">
-                <div class="feature-content">
-                    <div class="feature-icon">📊</div>
-                    <div class="feature-info">
-                        <div class="feature-title">Scoring IA</div>
-                        <div class="feature-description">Obtenez des recommandations personnalisées basées sur l'IA</div>
                     </div>
                     <div class="feature-arrow">›</div>
                 </div>
