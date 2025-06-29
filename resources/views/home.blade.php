@@ -198,3 +198,4 @@
 </style>
 @endsection
 /* Waze-style modern design Sun Jun 29 17:01:00 CEST 2025 */
+/* Design Waze amélioré Sun Jun 29 17:13:26 CEST 2025 */
