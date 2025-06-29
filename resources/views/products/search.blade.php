@@ -998,4 +998,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-@endsection
+@endsection/* WAZE STYLE TRANSFORMATION Sun Jun 29 18:11:27 CEST 2025 */
