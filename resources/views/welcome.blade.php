@@ -315,7 +315,6 @@
         <!-- Navigation bottom -->
         <div class="bottom-nav">
             <a href="{{ route('products.search') }}" class="nav-item active">
-                <div class="nav-icon">🔍</div>
                 <div class="nav-icon">👥</div>
                 <div class="nav-label">Communauté</div>
             </a>

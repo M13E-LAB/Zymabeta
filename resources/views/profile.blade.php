@@ -617,7 +617,6 @@
                     <div class="activity-points">+15 pts</div>
                 </div>
                 <div class="activity-item">
-                    <div class="activity-icon">🔍</div>
                     <div class="activity-content">
                         <div class="activity-title">Produit scanné</div>
                         <div class="activity-time">Il y a 5 heures</div>
@@ -699,7 +698,6 @@
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
             <a href="{{ route('home') }}" class="bottom-nav-item">
-                <div class="bottom-nav-icon">🔍</div>
                 <div class="bottom-nav-icon">📱</div>
                 <div class="bottom-nav-label">Communauté</div>
             </a>
